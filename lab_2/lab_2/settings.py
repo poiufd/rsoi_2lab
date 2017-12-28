@@ -27,10 +27,12 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
+CSRF_COOKIE_SECURE = True
 # Application definition
 
 INSTALLED_APPS = [
+    'rest_framework',
+    'user.apps.UserConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -75,8 +77,12 @@ WSGI_APPLICATION = 'lab_2.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'users',
+        'USER' : 'sanya',
+        'PASSWORD' : 'aikido',
+        'HOST' : '127.0.0.1',
+        'PORT' : '5432',
     }
 }
 

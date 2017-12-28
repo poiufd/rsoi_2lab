@@ -1,0 +1,9 @@
+Change your models (in models.py).
+Run python manage.py makemigrations to create migrations for those changes
+Run python manage.py migrate to apply those changes to the database.
+
+>>> import os
+>>> os.environ.setdefault("DJANGO_SETTINGS_MODULE", "lab_2.settings")
+'lab_2.settings'
+>>> import django
+>>> django.setup()
