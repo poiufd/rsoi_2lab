@@ -83,6 +83,7 @@ DATABASES = {
         'PASSWORD' : 'aikido',
         'HOST' : '127.0.0.1',
         'PORT' : '5432',
+        'TEST': {'NAME': 'user_test'},
     }
 }
 
@@ -124,3 +125,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+REST_FRAMEWORK = {
+    'TEST_REQUEST_DEFAULT_FORMAT': 'json'
+}
