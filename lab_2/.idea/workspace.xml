@@ -12,34 +12,22 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file leaf-file-name="views.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../b_server/buys/views.py">
+        <entry file="file://$PROJECT_DIR$/../ag_service/aggregator/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="488">
-              <caret line="54" column="44" lean-forward="true" selection-start-line="48" selection-start-column="8" selection-end-line="54" selection-end-column="44" />
+            <state relative-caret-position="628">
+              <caret line="66" column="0" lean-forward="true" selection-start-line="66" selection-start-column="0" selection-end-line="66" selection-end-column="0" />
               <folding>
-                <element signature="e#0#23#0" expanded="true" />
+                <element signature="e#0#40#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="views.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/../pr_service/products/views.py">
+      <file leaf-file-name="tests.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/../ag_service/aggregator/tests.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="780">
-              <caret line="39" column="41" lean-forward="true" selection-start-line="39" selection-start-column="41" selection-end-line="39" selection-end-column="41" />
-              <folding>
-                <element signature="e#0#27#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="tests.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../b_server/buys/tests.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="540">
-              <caret line="27" column="40" lean-forward="true" selection-start-line="27" selection-start-column="40" selection-end-line="27" selection-end-column="40" />
+            <state relative-caret-position="308">
+              <caret line="17" column="66" lean-forward="false" selection-start-line="17" selection-start-column="66" selection-end-line="17" selection-end-column="66" />
               <folding>
                 <element signature="e#0#33#0" expanded="true" />
               </folding>
@@ -74,13 +62,13 @@
         <option value="$PROJECT_DIR$/../pr_service/products/tests.py" />
         <option value="$PROJECT_DIR$/../ag_service/ag_service/urls.py" />
         <option value="$PROJECT_DIR$/../ag_service/aggregator/urls.py" />
-        <option value="$PROJECT_DIR$/../ag_service/aggregator/views.py" />
-        <option value="$PROJECT_DIR$/../ag_service/aggregator/tests.py" />
         <option value="$PROJECT_DIR$/../b_server/b_server/settings.py" />
         <option value="$PROJECT_DIR$/../pr_service/pr_service/settings.py" />
         <option value="$PROJECT_DIR$/../ag_service/ag_service/settings.py" />
         <option value="$PROJECT_DIR$/../b_server/buys/views.py" />
         <option value="$PROJECT_DIR$/../pr_service/products/views.py" />
+        <option value="$PROJECT_DIR$/../ag_service/aggregator/views.py" />
+        <option value="$PROJECT_DIR$/../ag_service/aggregator/tests.py" />
       </list>
     </option>
   </component>
@@ -110,12 +98,12 @@
           <expand>
             <path>
               <item name="lab_2" type="b2602c69:ProjectViewProjectNode" />
-              <item name="pr_service" type="462c0819:PsiDirectoryNode" />
+              <item name="ag_service" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="lab_2" type="b2602c69:ProjectViewProjectNode" />
-              <item name="pr_service" type="462c0819:PsiDirectoryNode" />
-              <item name="products" type="462c0819:PsiDirectoryNode" />
+              <item name="ag_service" type="462c0819:PsiDirectoryNode" />
+              <item name="aggregator" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -488,26 +476,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../ag_service/aggregator/tests.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="580">
-          <caret line="29" column="23" lean-forward="false" selection-start-line="29" selection-start-column="23" selection-end-line="29" selection-end-column="23" />
-          <folding>
-            <element signature="e#0#33#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../ag_service/aggregator/views.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="268">
-          <caret line="80" column="56" lean-forward="true" selection-start-line="80" selection-start-column="56" selection-end-line="80" selection-end-column="56" />
-          <folding>
-            <element signature="e#0#40#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../ag_service/ag_service/settings.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="788">
@@ -550,6 +518,34 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/../pr_service/products/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="9" column="0" lean-forward="true" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../pr_service/products/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="780">
+          <caret line="39" column="41" lean-forward="true" selection-start-line="39" selection-start-column="41" selection-end-line="39" selection-end-column="41" />
+          <folding>
+            <element signature="e#0#27#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../b_server/buys/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="280">
+          <caret line="14" column="12" lean-forward="true" selection-start-line="14" selection-start-column="12" selection-end-line="14" selection-end-column="12" />
+          <folding>
+            <element signature="e#0#23#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/../b_server/buys/tests.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="540">
@@ -560,30 +556,22 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../pr_service/products/models.py">
+    <entry file="file://$PROJECT_DIR$/../ag_service/aggregator/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="9" column="0" lean-forward="true" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../b_server/buys/views.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="488">
-          <caret line="54" column="44" lean-forward="true" selection-start-line="48" selection-start-column="8" selection-end-line="54" selection-end-column="44" />
+        <state relative-caret-position="628">
+          <caret line="66" column="0" lean-forward="true" selection-start-line="66" selection-start-column="0" selection-end-line="66" selection-end-column="0" />
           <folding>
-            <element signature="e#0#23#0" expanded="true" />
+            <element signature="e#0#40#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../pr_service/products/views.py">
+    <entry file="file://$PROJECT_DIR$/../ag_service/aggregator/tests.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="780">
-          <caret line="39" column="41" lean-forward="true" selection-start-line="39" selection-start-column="41" selection-end-line="39" selection-end-column="41" />
+        <state relative-caret-position="308">
+          <caret line="17" column="66" lean-forward="false" selection-start-line="17" selection-start-column="66" selection-end-line="17" selection-end-column="66" />
           <folding>
-            <element signature="e#0#27#0" expanded="true" />
+            <element signature="e#0#33#0" expanded="true" />
           </folding>
         </state>
       </provider>

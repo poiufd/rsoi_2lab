@@ -14,7 +14,7 @@ class AggregatorTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_update_order_ok(self):
-        response = self.client.patch(reverse('agg2', args=[3, 4]), {'products_id': [2]}, format='json')
+        response = self.client.patch(reverse('agg2', args=[3, 4]), {'products_id': [1]}, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_update_order_wrong_userid(self):

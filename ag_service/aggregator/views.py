@@ -6,10 +6,13 @@ from rest_framework.parsers import JSONParser
 import requests.exceptions
 from django.http import Http404
 from rest_framework import status
+import logging
 
 url_buys = 'http://localhost:8000/buys/'
 url_products = 'http://localhost:8001/products/'
 url_user = 'http://localhost:8002/user/'
+
+logger = logging.getLogger('agg_logger')
 
 
 class AggUserBuysView(APIView):
@@ -30,6 +33,8 @@ class AggUserBuysView(APIView):
         except requests.exceptions.HTTPError as e:
             status_code = e.response.status_code
             return Response(status=status_code)
+        logger.info(u"Show order details")
+
         return Response(dict, status=status.HTTP_200_OK)
 
 
@@ -56,9 +61,9 @@ class AggUpdateOrder(APIView):
 
                     r2 = requests.patch(url_products + str(id) + "/",temp)
                     r2.raise_for_status()
-                prev_id.append(id)
-                #else:
-                #    return count = 0
+                    prev_id.append(id)
+                else:
+                    return Response({"Error": "Product is not available"})
 
             dict.update({'products_id': prev_id})
             r3 = requests.patch(url_buys+ str(order_id) + "/", dict)
@@ -67,6 +72,8 @@ class AggUpdateOrder(APIView):
         except requests.exceptions.HTTPError as e:
             status_code = e.response.status_code
             return Response(status=status_code)
+        logger.info(u"Edit order details")
+
         return Response(r.json())
 
 
@@ -93,8 +100,8 @@ class AggDeleteOrder(APIView):
                 r.raise_for_status()
                 prev_id.remove(product_id)
 
-            # else:
-            #    return count = 0
+            else:
+                return Response({"Error": "Id not found"})
 
             dict.update({'products_id': prev_id})
             r = requests.patch(url_buys + str(order_id) + "/", dict)
@@ -103,4 +110,6 @@ class AggDeleteOrder(APIView):
         except requests.exceptions.HTTPError as e:
             status_code = e.response.status_code
             return Response(status=status_code)
+        logger.info(u"Delete product from order")
+
         return Response(r.json())
