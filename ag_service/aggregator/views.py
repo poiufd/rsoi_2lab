@@ -15,22 +15,21 @@ url_user = 'http://localhost:8002/user/'
 class AggUserBuysView(APIView):
 
     def get(self, request, order_id, format=None):
-
         try:
             r = requests.get(url_buys+str(order_id)+"/")
             r.raise_for_status()
+            dict = r.json(object_pairs_hook=OrderedDict)
+            ids = set(dict.get('products_id'))
+            list = []
+
+            for id in ids:
+                r = requests.get(url_products+str(id)+"/")
+                list.append(r.json(object_pairs_hook=OrderedDict))
+            dict.update({'products_id': list})
+
         except requests.exceptions.HTTPError as e:
             status_code = e.response.status_code
             return Response(status=status_code)
-
-        dict = r.json(object_pairs_hook=OrderedDict)
-        ids = set(dict.get('products_id'))
-        list = []
-
-        for id in ids:
-            r1 = requests.get(url_products+str(id)+"/")
-            list.append(r1.json(object_pairs_hook=OrderedDict))
-        dict.update({'products_id': list})
         return Response(dict, status=status.HTTP_200_OK)
 
 
@@ -74,7 +73,6 @@ class AggUpdateOrder(APIView):
 class AggDeleteOrder(APIView):
 
     def patch(self, request, user_id, order_id, product_id, format=None):
-
         try:
             r = requests.get(url_buys + str(order_id) + "/")
             r.raise_for_status()

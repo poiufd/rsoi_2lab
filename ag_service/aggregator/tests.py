@@ -1,26 +1,42 @@
 from rest_framework import status
 from rest_framework.test import APITestCase
-import unittest
-from django.test import RequestFactory
-from .views import *
-from django.test import TestCase
 from django.urls import reverse
 
 
-class AggregatorTests(TestCase):
-    #
-    # def test_get(self):
-    #     request = RequestFactory().get('http://127.0.0.1:8000/order/' + str(2) + "/")
+class AggregatorTests(APITestCase):
 
-        def setUp(self):
-            #self.user = UserFactory()
-            self.factory = RequestFactory()
+    def test_get_exist_buys(self):
+        response = self.client.get(reverse('agg1', args=[2]))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        def test_get(self):
-            """
-            Test GET requests
-            """
-            request = self.factory.get(reverse('agg1',args=[2]))
-            #request.user = self.user
-            response = AggUserBuysView.as_view()(request,2)
-            self.assertEqual(response.status_code, 200)
+    def test_get_not_exist_buys(self):
+        response = self.client.get(reverse('agg1', args=[10]))
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_update_order_ok(self):
+        response = self.client.patch(reverse('agg2', args=[3, 4]), {'products_id': [2]}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_update_order_wrong_userid(self):
+        response = self.client.patch(reverse('agg2', args=[10, 4]), {'products_id': [2]}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_update_order_not_exist(self):
+        response = self.client.patch(reverse('agg2', args=[3, 10]), {'products_id': [2]}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_delete_order_ok(self):
+        response = self.client.patch(reverse('agg3', args=[3, 4, 3]))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_delete_order_wrong_userid(self):
+        response = self.client.patch(reverse('agg3', args=[10, 4, 3]))
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_delete_order_not_exist(self):
+        response = self.client.patch(reverse('agg3', args=[3, 10, 3]))
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_delete_order_product_not_exist(self):
+        response = self.client.patch(reverse('agg3', args=[3, 4, 10]))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
