@@ -8,14 +8,26 @@ from django.http import Http404
 
 class ProductView(APIView):
 
-    def get(self, request, id, format=None):
+    def get_object(self, id):
         try:
-            product = Product.objects.get(id=id)
+            return Product.objects.get(id=id)
         except Product.DoesNotExist:
             raise Http404
 
+    def get(self, request, id, format=None):
+        product = self.get_object(id)
         serializer = ProductSerializer(product)
         return Response(serializer.data)
+
+    def patch(self, request, id, format=None):
+
+        product = self.get_object(id)
+        serializer = ProductSerializer(product, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ProductsView(APIView):

@@ -6,6 +6,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="b_server" />
     <orderEntry type="module" module-name="pr_service" />
+    <orderEntry type="module" module-name="ag_service" />
   </component>
   <component name="TestRunnerService">
     <option name="PROJECT_TEST_RUNNER" value="Unittests" />
