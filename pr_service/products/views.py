@@ -5,6 +5,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.http import Http404
+from django.core.paginator import Paginator
 
 class ProductView(APIView):
 
@@ -35,6 +36,13 @@ class ProductsView(APIView):
     def get(self, request, format=None):
 
         product = Product.objects.all()
+
+        paginator = Paginator(product, 2)
+        page = request.GET.get('page')
+        data = paginator.get_page(page)
+        if page is not None:
+            serializer = ProductSerializer(data, many=True)
+            return Response(serializer.data)
         serializer = ProductSerializer(product, many=True)
         return Response(serializer.data)
 
