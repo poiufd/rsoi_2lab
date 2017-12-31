@@ -24,21 +24,23 @@ class AggUserBuysView(APIView):
             ids = set(dict.get('products_id'))
             list = []
 
-            for id in ids:
-                r = requests.get(url_products+str(id)+"/")
-                list.append(r.json(object_pairs_hook=OrderedDict))
-            dict.update({'products_id': list})
+            # here add degradation
+            try:
+                for id in ids:
+                    r = requests.get(url_products+str(id)+"/")
+                    list.append(r.json(object_pairs_hook=OrderedDict))
+                dict.update({'products_id': list})
+            except requests.exceptions.RequestException:
+                dict.update({"detail": "Service temporarily unavailable."})
+                return Response(dict, status=status.HTTP_200_OK)
 
         except requests.exceptions.HTTPError as e:
             status_code = e.response.status_code
             return Response(r.json(), status=status_code)
-
-        #here add degradation
         except requests.exceptions.RequestException:
             return Response({"detail": "Service temporarily unavailable."}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
         logger.info(u"Show order details")
-
         return Response(dict, status=status.HTTP_200_OK)
 
     def patch(self, request, user_id, order_id, format=None):
@@ -51,22 +53,22 @@ class AggUserBuysView(APIView):
             ids = data.get('products_id')
 
             for id in ids:
-                r1 = requests.get(url_products + str(id) + "/")
-                r1.raise_for_status()
-                temp = r1.json(object_pairs_hook=OrderedDict)
+                r = requests.get(url_products + str(id) + "/")
+                r.raise_for_status()
+                temp = r.json(object_pairs_hook=OrderedDict)
                 c = temp.get('count')
                 if c > 0:
                     temp.update({'count': (c-1)})
 
-                    r2 = requests.patch(url_products + str(id) + "/",temp)
-                    r2.raise_for_status()
+                    r = requests.patch(url_products + str(id) + "/",temp)
+                    r.raise_for_status()
                     prev_id.append(id)
                 else:
-                    return Response({"Error": "Product is not available"})
+                    return Response({"detail": "Product is not available."})
 
             dict.update({'products_id': prev_id})
-            r3 = requests.patch(url_buys+ str(order_id) + "/", dict)
-            r3.raise_for_status()
+            r = requests.patch(url_buys+ str(order_id) + "/", dict)
+            r.raise_for_status()
 
         except requests.exceptions.HTTPError as e:
             status_code = e.response.status_code
@@ -75,7 +77,6 @@ class AggUserBuysView(APIView):
             return Response({"detail": "Service temporarily unavailable."}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
         logger.info(u"Edit order details")
-
         return Response(r.json())
 
 
@@ -90,26 +91,31 @@ class AggDeleteOrder(APIView):
             product_id = int(product_id)
             prev_id = list(map(int, prev_id))
 
-            if product_id in prev_id:
-                r = requests.get(url_products + str(product_id) + "/")
-                r.raise_for_status()
-                temp = r.json(object_pairs_hook=OrderedDict)
-                c = temp.get('count')
-                temp.update({'count': (c + 1)})
-                r = requests.patch(url_products + str(product_id) + "/", temp)
-                r.raise_for_status()
-                prev_id.remove(product_id)
+            try:
+                if product_id in prev_id:
+                    r = requests.get(url_products + str(product_id) + "/")
+                    r.raise_for_status()
+                    temp = r.json(object_pairs_hook=OrderedDict)
+                    c = temp.get('count')
+                    temp.update({'count': (c + 1)})
+                    r = requests.patch(url_products + str(product_id) + "/", temp)
+                    r.raise_for_status()
+                    prev_id.remove(product_id)
 
-            else:
-                return Response({"Error": "Id not found"})
+                else:
+                    return Response({"detail": "Id not found."})
 
-            dict.update({'products_id': prev_id})
-            r = requests.patch(url_buys + str(order_id) + "/", dict)
-            r.raise_for_status()
+                dict.update({'products_id': prev_id})
+                r = requests.patch(url_buys + str(order_id) + "/", dict)
+                r.raise_for_status()
+            except requests.exceptions.RequestException:
+                #tod0 queue
 
         except requests.exceptions.HTTPError as e:
             status_code = e.response.status_code
             return Response(r.json(), status=status_code)
-        logger.info(u"Delete product from order")
+        except requests.exceptions.RequestException:
+            return Response({"detail": "Service temporarily unavailable."}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
+        logger.info(u"Delete product from order")
         return Response(r.json())
