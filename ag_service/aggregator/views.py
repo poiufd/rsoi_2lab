@@ -4,7 +4,6 @@ import requests
 from collections import OrderedDict
 from rest_framework.parsers import JSONParser
 import requests.exceptions
-from django.http import Http404
 from rest_framework import status
 import logging
 
@@ -32,7 +31,12 @@ class AggUserBuysView(APIView):
 
         except requests.exceptions.HTTPError as e:
             status_code = e.response.status_code
-            return Response(status=status_code)
+            return Response(r.json(), status=status_code)
+
+        #here add degradation
+        except requests.exceptions.RequestException:
+            return Response({"detail": "Service temporarily unavailable."}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+
         logger.info(u"Show order details")
 
         return Response(dict, status=status.HTTP_200_OK)
@@ -66,7 +70,10 @@ class AggUserBuysView(APIView):
 
         except requests.exceptions.HTTPError as e:
             status_code = e.response.status_code
-            return Response(status=status_code)
+            return Response(r.json(), status=status_code)
+        except requests.exceptions.RequestException:
+            return Response({"detail": "Service temporarily unavailable."}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+
         logger.info(u"Edit order details")
 
         return Response(r.json())
@@ -102,7 +109,7 @@ class AggDeleteOrder(APIView):
 
         except requests.exceptions.HTTPError as e:
             status_code = e.response.status_code
-            return Response(status=status_code)
+            return Response(r.json(), status=status_code)
         logger.info(u"Delete product from order")
 
         return Response(r.json())

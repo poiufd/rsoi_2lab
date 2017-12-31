@@ -15,7 +15,7 @@ class BuyView(APIView):
         try:
             return Buy.objects.get(id=id)
         except Buy.DoesNotExist:
-            raise Http404
+            raise Http404("Not found")
 
     def get(self, request, id, format=None):
 
@@ -27,7 +27,7 @@ class BuyView(APIView):
 
         buy = self.get_object(id)
         buy.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response({"details": "Successfully deleted"}, status=status.HTTP_204_NO_CONTENT)
 
     def patch(self, request, id, format=None):
 
@@ -75,7 +75,7 @@ class BuysByUserView(APIView):
         try:
             return Buy.objects.get(id=buy_id, user_id=user_id)
         except Buy.DoesNotExist:
-            raise Http404
+            raise Http404("Not found")
 
     def get(self, request, user_id, buy_id, format=None):
 

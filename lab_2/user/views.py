@@ -13,7 +13,7 @@ class UserView(APIView):
         try:
             user = User.objects.get(id=id)
         except User.DoesNotExist:
-            raise Http404
+            raise Http404("Not found")
 
         serializer = UserSerializer(user)
         return Response(serializer.data)

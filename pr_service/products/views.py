@@ -13,7 +13,7 @@ class ProductView(APIView):
         try:
             return Product.objects.get(id=id)
         except Product.DoesNotExist:
-            raise Http404
+            raise Http404("Not found")
 
     def get(self, request, id, format=None):
         product = self.get_object(id)
