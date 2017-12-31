@@ -1,6 +1,7 @@
 from rest_framework import status
 from rest_framework.test import APITestCase
 from .models import Buy
+from django.urls import reverse
 
 
 class BuyTests(APITestCase):
@@ -48,3 +49,16 @@ class BuyTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertTrue(not response.data)
 
+    def test_get_user_buy(self):
+        response = self.client.get(reverse('buy_user', args=[1, self.id]))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertContains(response, 1)
+        self.assertContains(response, [1])
+
+    def test_get_user_buy_not_exist_user(self):
+        response = self.client.get(reverse('buy_user', args=[10, self.id]))
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_get_user_buy_not_exist_buy(self):
+        response = self.client.get(reverse('buy_user', args=[1, self.id+1]))
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)

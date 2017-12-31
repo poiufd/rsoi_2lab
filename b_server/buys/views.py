@@ -67,3 +67,18 @@ class BuysView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class BuysByUserView(APIView):
+
+    def get_object(self, user_id, buy_id):
+
+        try:
+            return Buy.objects.get(id=buy_id, user_id=user_id)
+        except Buy.DoesNotExist:
+            raise Http404
+
+    def get(self, request, user_id, buy_id, format=None):
+
+        buy = self.get_object(user_id, buy_id)
+        serializer = BuySerializer(buy)
+        return Response(serializer.data)

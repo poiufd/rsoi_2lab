@@ -17,9 +17,9 @@ logger = logging.getLogger('agg_logger')
 
 class AggUserBuysView(APIView):
 
-    def get(self, request, order_id, format=None):
+    def get(self, request, user_id, order_id, format=None):
         try:
-            r = requests.get(url_buys+str(order_id)+"/")
+            r = requests.get(url_buys+str(user_id)+"/" + str(order_id)+"/")
             r.raise_for_status()
             dict = r.json(object_pairs_hook=OrderedDict)
             ids = set(dict.get('products_id'))
@@ -37,18 +37,13 @@ class AggUserBuysView(APIView):
 
         return Response(dict, status=status.HTTP_200_OK)
 
-
-class AggUpdateOrder(APIView):
-
     def patch(self, request, user_id, order_id, format=None):
         try:
-            r = requests.get(url_buys + str(order_id) + "/")
+            r = requests.get(url_buys+str(user_id)+"/" + str(order_id)+"/")
             r.raise_for_status()
             data = JSONParser().parse(request)
             dict = r.json(object_pairs_hook=OrderedDict)
             prev_id = dict.get('products_id')
-            if int(dict.get('user_id')) != int(user_id):
-                raise Http404
             ids = data.get('products_id')
 
             for id in ids:
@@ -81,12 +76,10 @@ class AggDeleteOrder(APIView):
 
     def patch(self, request, user_id, order_id, product_id, format=None):
         try:
-            r = requests.get(url_buys + str(order_id) + "/")
+            r = requests.get(url_buys + str(user_id)+"/" + str(order_id)+"/")
             r.raise_for_status()
             dict = r.json(object_pairs_hook=OrderedDict)
             prev_id = dict.get('products_id')
-            if int(dict.get('user_id')) != int(user_id):
-                raise Http404
             product_id = int(product_id)
             prev_id = list(map(int, prev_id))
 
