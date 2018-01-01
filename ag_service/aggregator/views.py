@@ -6,6 +6,7 @@ from rest_framework.parsers import JSONParser
 import requests.exceptions
 from rest_framework import status
 import logging
+from ag_service.celery import app,work_with_products
 
 url_buys = 'http://localhost:8000/buys/'
 url_products = 'http://localhost:8001/products/'
@@ -63,8 +64,9 @@ class AggUserBuysView(APIView):
                     r = requests.patch(url_products + str(id) + "/",temp)
                     r.raise_for_status()
                     prev_id.append(id)
-                else:
-                    return Response({"detail": "Product is not available."})
+               #error here with several items
+                #else:
+                    #dict.update({"detail":"product is unavailable"})
 
             dict.update({'products_id': prev_id})
             r = requests.patch(url_buys+ str(order_id) + "/", dict)
@@ -79,7 +81,6 @@ class AggUserBuysView(APIView):
         logger.info(u"Edit order details")
         return Response(r.json())
 
-
 class AggDeleteOrder(APIView):
 
     def patch(self, request, user_id, order_id, product_id, format=None):
@@ -91,25 +92,15 @@ class AggDeleteOrder(APIView):
             product_id = int(product_id)
             prev_id = list(map(int, prev_id))
 
-            try:
-                if product_id in prev_id:
-                    r = requests.get(url_products + str(product_id) + "/")
-                    r.raise_for_status()
-                    temp = r.json(object_pairs_hook=OrderedDict)
-                    c = temp.get('count')
-                    temp.update({'count': (c + 1)})
-                    r = requests.patch(url_products + str(product_id) + "/", temp)
-                    r.raise_for_status()
-                    prev_id.remove(product_id)
-
-                else:
-                    return Response({"detail": "Id not found."})
-
+            if product_id in prev_id:
+                prev_id.remove(product_id)
                 dict.update({'products_id': prev_id})
                 r = requests.patch(url_buys + str(order_id) + "/", dict)
                 r.raise_for_status()
-            except requests.exceptions.RequestException:
-                #tod0 queue
+                work_with_products.delay(product_id)
+
+            else:
+                return Response({"detail": "Id not found."})
 
         except requests.exceptions.HTTPError as e:
             status_code = e.response.status_code

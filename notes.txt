@@ -7,3 +7,6 @@ Run python manage.py migrate to apply those changes to the database.
 'lab_2.settings'
 >>> import django
 >>> django.setup()
+
+celery -A ag_service worker -l info
+
