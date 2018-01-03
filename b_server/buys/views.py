@@ -82,3 +82,16 @@ class BuysByUserView(APIView):
         buy = self.get_object(user_id, buy_id)
         serializer = BuySerializer(buy)
         return Response(serializer.data)
+
+class AllBuysByUserView(APIView):
+
+    def get(self, request, user_id,format=None):
+        buy = Buy.objects.filter(user_id=user_id)
+        if buy.exists():
+            serializer = BuySerializer(buy, many=True)
+            return Response(serializer.data)
+
+        else:
+            raise Http404
+        #serializer = BuySerializer(buy, many=True)
+        #return Response(serializer.data)
