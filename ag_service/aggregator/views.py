@@ -19,7 +19,7 @@ class AggUserBuysView(APIView):
 
     def get(self, request, user_id, order_id, format=None):
         try:
-            r = requests.get(url_buys+str(user_id)+"/" + str(order_id)+"/")
+            r = requests.get(url_buys+"user/"+str(user_id)+"/" + str(order_id)+"/")
             r.raise_for_status()
             dict = r.json(object_pairs_hook=OrderedDict)
             ids = set(dict.get('products_id'))
@@ -46,7 +46,7 @@ class AggUserBuysView(APIView):
 
     def patch(self, request, user_id, order_id, format=None):
         try:
-            r = requests.get(url_buys+str(user_id)+"/" + str(order_id)+"/")
+            r = requests.get(url_buys+"user/"+str(user_id)+"/" + str(order_id)+"/")
             r.raise_for_status()
             data = JSONParser().parse(request)
             dict = r.json(object_pairs_hook=OrderedDict)
@@ -85,7 +85,7 @@ class AggDeleteOrder(APIView):
 
     def patch(self, request, user_id, order_id, product_id, format=None):
         try:
-            r = requests.get(url_buys + str(user_id)+"/" + str(order_id)+"/")
+            r = requests.get(url_buys +"user/"+ str(user_id)+"/" + str(order_id)+"/")
             r.raise_for_status()
             dict = r.json(object_pairs_hook=OrderedDict)
             prev_id = dict.get('products_id')
@@ -110,3 +110,17 @@ class AggDeleteOrder(APIView):
 
         logger.info(u"Delete product from order")
         return Response(r.json())
+
+class AggUserAllBuysView(APIView):
+
+    def get(self, request, user_id, format=None):
+        try:
+            r = requests.get(url_buys+"user/"+str(user_id)+"/")
+            r.raise_for_status()
+
+        except requests.exceptions.HTTPError as e:
+            status_code = e.response.status_code
+            return Response(status=status_code)
+        logger.info(u"Show orders")
+
+        return Response(r.json(object_pairs_hook=OrderedDict), status=status.HTTP_200_OK)

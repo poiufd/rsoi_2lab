@@ -62,3 +62,11 @@ class BuyTests(APITestCase):
     def test_get_user_buy_not_exist_buy(self):
         response = self.client.get(reverse('buy_user', args=[1, self.id+1]))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_get_user_buys(self):
+        response = self.client.get(reverse('all_buy_user', args=[1]))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_get_user_buys_not_exist_user(self):
+        response = self.client.get(reverse('all_buy_user', args=[5]))
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
