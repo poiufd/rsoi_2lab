@@ -120,7 +120,9 @@ class AggUserAllBuysView(APIView):
 
         except requests.exceptions.HTTPError as e:
             status_code = e.response.status_code
-            return Response(status=status_code)
+            return Response(r.json(), status=status_code)
+        except requests.exceptions.RequestException:
+            return Response({"detail": "Service temporarily unavailable."}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
         logger.info(u"Show orders")
 
         return Response(r.json(object_pairs_hook=OrderedDict), status=status.HTTP_200_OK)
