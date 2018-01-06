@@ -7,6 +7,8 @@ import requests.exceptions
 from rest_framework import status
 import logging
 from ag_service.celery import app,work_with_products
+from django.shortcuts import render
+import json
 
 url_buys = 'http://localhost:8000/buys/'
 url_products = 'http://localhost:8001/products/'
@@ -113,6 +115,8 @@ class AggDeleteOrder(APIView):
 
 class AggUserAllBuysView(APIView):
 
+    #template = 'index.html'
+
     def get(self, request, user_id, format=None):
         try:
             r = requests.get(url_buys+"user/"+str(user_id)+"/")
@@ -126,3 +130,4 @@ class AggUserAllBuysView(APIView):
         logger.info(u"Show orders")
 
         return Response(r.json(object_pairs_hook=OrderedDict), status=status.HTTP_200_OK)
+        #return render(request, self.template, {'result':r.json(object_pairs_hook=OrderedDict)})
