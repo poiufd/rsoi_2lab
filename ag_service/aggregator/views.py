@@ -14,8 +14,8 @@ url_buys = 'http://localhost:8000/buys/'
 url_products = 'http://localhost:8001/products/'
 url_user = 'http://localhost:8002/user/'
 
-logger = logging.getLogger('agg_logger')
-
+#logger = logging.getLogger('agg_logger')
+logging.basicConfig(filename='temp.log', level=logging.INFO)
 
 class AggUserBuysView(APIView):
 
@@ -43,7 +43,7 @@ class AggUserBuysView(APIView):
         except requests.exceptions.RequestException:
             return Response({"detail": "Service temporarily unavailable."}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
-        logger.info(u"Show order details")
+        logging.info(u"Show order details")
         return Response(dict, status=status.HTTP_200_OK)
 
     def patch(self, request, user_id, order_id, format=None):
@@ -66,9 +66,23 @@ class AggUserBuysView(APIView):
                     r = requests.patch(url_products + str(id) + "/",temp)
                     r.raise_for_status()
                     prev_id.append(id)
-               #error here with several items
-                #else:
-                    #dict.update({"detail":"product is unavailable"})
+            logging.info(u"Patch products done")
+
+            #adding here useless get request to show return
+            try:
+                r = requests.get(url_user+str(user_id)+"/" )    
+                r.raise_for_status()
+            except requests.exceptions.RequestException:
+                #todo
+                for id in ids:
+                    r = requests.get(url_products + str(id) + "/")
+                    temp = r.json(object_pairs_hook=OrderedDict)
+                    c = temp.get('count')
+                    temp.update({'count': (c+1)})
+                    r = requests.patch(url_products + str(id) + "/",temp)
+                logging.info(u"Patch products reversed")    
+                return Response({"detail": "Service temporarily unavailable."}, status=status.HTTP_503_SERVICE_UNAVAILABLE)    
+
 
             dict.update({'products_id': prev_id})
             r = requests.patch(url_buys+ str(order_id) + "/", dict)
@@ -80,7 +94,7 @@ class AggUserBuysView(APIView):
         except requests.exceptions.RequestException:
             return Response({"detail": "Service temporarily unavailable."}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
-        logger.info(u"Edit order details")
+        logging.info(u"Edit order details")
         return Response(r.json())
 
 class AggDeleteOrder(APIView):
@@ -110,7 +124,7 @@ class AggDeleteOrder(APIView):
         except requests.exceptions.RequestException:
             return Response({"detail": "Service temporarily unavailable."}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
-        logger.info(u"Delete product from order")
+        logging.info(u"Delete product from order")
         return Response(r.json())
 
 class AggUserAllBuysView(APIView):
@@ -127,7 +141,7 @@ class AggUserAllBuysView(APIView):
             return Response(r.json(), status=status_code)
         except requests.exceptions.RequestException:
             return Response({"detail": "Service temporarily unavailable."}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
-        logger.info(u"Show orders")
+        logging.info(u"Show orders")
 
         return Response(r.json(object_pairs_hook=OrderedDict), status=status.HTTP_200_OK)
         #return render(request, self.template, {'result':r.json(object_pairs_hook=OrderedDict)})

@@ -1,0 +1,16 @@
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTP connection (1): localhost
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTP connection (1): localhost
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTP connection (1): localhost
+INFO:root:Patch products done
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTP connection (1): localhost
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTP connection (1): localhost
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTP connection (1): localhost
+INFO:root:Patch products reversed
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTP connection (1): localhost
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTP connection (1): localhost
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTP connection (1): localhost
+INFO:root:Patch products done
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTP connection (1): localhost
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTP connection (1): localhost
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTP connection (1): localhost
+INFO:root:Patch products reversed
