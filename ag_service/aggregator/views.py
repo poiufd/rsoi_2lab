@@ -14,6 +14,7 @@ from rest_framework.renderers import TemplateHTMLRenderer
 from django.http import Http404
 from django.http import HttpResponse
 from django.template import RequestContext
+from django.shortcuts import redirect
 
 
 url_buys = 'http://localhost:8000/buys/'
@@ -120,8 +121,8 @@ class AggUserBuysView(APIView):
 
         logging.info(u"Edit order details")
         #return Response(r.json())
-        return render(request, 'success.html', {'result':r.json()})
-
+        #return render(request, 'success.html', {'result':r.json()})
+        return redirect('agg1', user_id= user_id, order_id=order_id)
 
 class AggDeleteOrder(APIView):
 
@@ -142,16 +143,21 @@ class AggDeleteOrder(APIView):
                 work_with_products.delay(product_id)
 
             else:
-                return Response({"detail": "Id not found."})
+                #return Response({"detail": "Id not found."})
+                return render(request, 'order_detail.html', {'result':r.json().update({"detail": "Id not found."})} )
 
         except requests.exceptions.HTTPError as e:
             status_code = e.response.status_code
-            return Response(r.json(), status=status_code)
+            #return Response(r.json(), status=status_code)
+            return HttpResponse(loader.render_to_string( str(status_code)+'.html'), status=status_code)
         except requests.exceptions.RequestException:
-            return Response({"detail": "Service temporarily unavailable."}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
-
+            #return Response({"detail": "Service temporarily unavailable."}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+            return HttpResponse(loader.render_to_string('503.html'), status=503) 
+        
         logging.info(u"Delete product from order")
-        return Response(r.json())
+        #return Response(r.json())
+        #return render(request, 'success.html', {'result':dict})
+        return redirect('agg1', user_id= user_id, order_id=order_id)
 
 class AggUserAllBuysView(APIView):
 

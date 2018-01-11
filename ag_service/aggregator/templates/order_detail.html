@@ -7,6 +7,7 @@
   <th>Model</th>
   <th>Year</th>
   <th>Country</th>  
+  <th>Delete Item</th> 
 </tr>
   	{% for product in result.products_id %}
     	<tr>
@@ -14,6 +15,9 @@
     		<th> </th>
     		<th> </th>
     		<th> </th>
+    		<th> <form action="{% url 'agg3' result.user_id result.id product %}" method="post">
+					<input style="vertical-align:bottom" type="submit" name="submit" value="-" />
+				</form></th>
     	</tr> 
   	{% endfor %}
 </table> 
@@ -23,7 +27,8 @@
   <th>Id</th>
   <th>Model</th>
   <th>Year</th>
-  <th>Country</th>  
+  <th>Country</th> 
+  <th>Delete Item</th>  
 </tr>
   	{% for product in result.products_id %}
     	<tr>
@@ -31,11 +36,13 @@
     		<th> {{ product.model}}</th>
     		<th>{{ product.year }}</th>
     		<th> {{ product.country}}</th>
+    		<th> <form action="{% url 'agg3' result.user_id result.id product.id %}" method="post">
+					<input style="vertical-align:bottom" type="submit" name="submit" value="-" />
+				</form></th>
     	</tr> 
   	{% endfor %}
 </table> 
 {% endif %}
-
 
 <form action="{% url 'agg1' result.user_id result.id %}" method="post">
 	<label for="products_id">Add new item </label>
