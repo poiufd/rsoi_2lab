@@ -1,0 +1,46 @@
+<h1>Order details</h1>
+ <p> order number = {{result.number}} </p>
+{% if result.detail %} <p style="color: red;"><strong>{{ result.detail }}</strong></p>
+<table>
+<tr>
+  <th>Id</th>
+  <th>Model</th>
+  <th>Year</th>
+  <th>Country</th>  
+</tr>
+  	{% for product in result.products_id %}
+    	<tr>
+    		<th>{{ product }}</th>
+    		<th> </th>
+    		<th> </th>
+    		<th> </th>
+    	</tr> 
+  	{% endfor %}
+</table> 
+{%else%}
+<table>
+<tr>
+  <th>Id</th>
+  <th>Model</th>
+  <th>Year</th>
+  <th>Country</th>  
+</tr>
+  	{% for product in result.products_id %}
+    	<tr>
+    		<th>{{ product.id }}</th>
+    		<th> {{ product.model}}</th>
+    		<th>{{ product.year }}</th>
+    		<th> {{ product.country}}</th>
+    	</tr> 
+  	{% endfor %}
+</table> 
+{% endif %}
+
+
+<form action="{% url 'agg1' result.user_id result.id %}" method="post">
+	<label for="products_id">Add new item </label>
+	<input type="number" name="products_id" required/ >
+	<input type="submit"  name="submit" value="Add" />
+</form>
+
+

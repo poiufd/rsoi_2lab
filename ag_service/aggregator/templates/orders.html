@@ -1,0 +1,13 @@
+<h1>Orders</h1>
+<table>
+<tr>
+  <th>Number</th>
+  <th>Products</th>
+</tr>
+  {% for order in result %}
+    <tr>
+    <th> <a href="{% url 'agg1' order.user_id order.id %}">{{ order.number }}</a></th>
+    <th> {{ order.products_id }}</th>
+    </tr> 
+  {% endfor %}
+</table>
