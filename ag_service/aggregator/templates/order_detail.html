@@ -7,7 +7,7 @@
   <th>Model</th>
   <th>Year</th>
   <th>Country</th>  
-  <th>Delete Item</th> 
+  <th>Delete item</th> 
 </tr>
   	{% for product in result.products_id %}
     	<tr>
@@ -28,7 +28,7 @@
   <th>Model</th>
   <th>Year</th>
   <th>Country</th> 
-  <th>Delete Item</th>  
+  <th>Delete item</th>  
 </tr>
   	{% for product in result.products_id %}
     	<tr>
@@ -50,4 +50,7 @@
 	<input type="submit"  name="submit" value="Add" />
 </form>
 
+<form action="{% url 'agg2' result.user_id %}" method="get">
+	<input type="submit"  name="submit" value="Back" />
+</form>
 

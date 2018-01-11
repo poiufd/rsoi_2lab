@@ -196,3 +196,63 @@ INFO:requests.packages.urllib3.connectionpool:Starting new HTTP connection (1): 
 INFO:requests.packages.urllib3.connectionpool:Starting new HTTP connection (1): localhost
 INFO:requests.packages.urllib3.connectionpool:Starting new HTTP connection (1): localhost
 INFO:root:Show order details
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTP connection (1): localhost
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTP connection (1): localhost
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTP connection (1): localhost
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTP connection (1): localhost
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTP connection (1): localhost
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTP connection (1): localhost
+INFO:root:Show order details
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTP connection (1): localhost
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTP connection (1): localhost
+INFO:root:Delete product from order
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTP connection (1): localhost
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTP connection (1): localhost
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTP connection (1): localhost
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTP connection (1): localhost
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTP connection (1): localhost
+INFO:root:Show order details
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTP connection (1): localhost
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTP connection (1): localhost
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTP connection (1): localhost
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTP connection (1): localhost
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTP connection (1): localhost
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTP connection (1): localhost
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTP connection (1): localhost
+INFO:root:Show order details
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTP connection (1): localhost
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTP connection (1): localhost
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTP connection (1): localhost
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTP connection (1): localhost
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTP connection (1): localhost
+INFO:root:Show order details
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTP connection (1): localhost
+INFO:root:Show orders
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTP connection (1): localhost
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTP connection (1): localhost
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTP connection (1): localhost
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTP connection (1): localhost
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTP connection (1): localhost
+INFO:root:Show order details
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTP connection (1): localhost
+INFO:root:Show orders
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTP connection (1): localhost
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTP connection (1): localhost
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTP connection (1): localhost
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTP connection (1): localhost
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTP connection (1): localhost
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTP connection (1): localhost
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTP connection (1): localhost
+INFO:root:Show order details
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTP connection (1): localhost
+INFO:root:Show orders
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTP connection (1): localhost
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTP connection (1): localhost
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTP connection (1): localhost
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTP connection (1): localhost
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTP connection (1): localhost
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTP connection (1): localhost
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTP connection (1): localhost
+INFO:root:Show order details
+INFO:requests.packages.urllib3.connectionpool:Starting new HTTP connection (1): localhost
+INFO:root:Show orders
