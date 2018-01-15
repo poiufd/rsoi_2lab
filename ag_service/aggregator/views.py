@@ -27,9 +27,9 @@ class UserLogin(CsrfExemptMixin,APIView):
     authentication_classes = []
     def get(self, request):
         return HttpResponse(loader.render_to_string('index.html'))
+''' 
+ def post(self, request):
 
-   
-    def post(self, request):
         try:
             r = requests.post(url_user + 'auth/?clientId={}&clientSecret={}'.format(ClientId,ClientSecret), request.POST)
             r.raise_for_status()
@@ -39,10 +39,18 @@ class UserLogin(CsrfExemptMixin,APIView):
         except requests.exceptions.RequestException:
             return HttpResponse(loader.render_to_string('503.html'), status=503)  
 
-        return render(request, 'index.html', {'error':r.json()})      
+        temp = request.GET.get("code")
+        print(temp)
+        return HttpResponse(r)      
+'''
 
-def auth(request):
-    return HttpResponse("Success")
+class Auth(CsrfExemptMixin,APIView):
+    authentication_classes = []
+    
+    def get(self,request):
+        print(request.GET.get('code'))           
+        return HttpResponse("Success" + request.GET.get('code'))
+
 
 class AggUserBuysView(APIView):
 

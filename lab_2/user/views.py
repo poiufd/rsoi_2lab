@@ -1,11 +1,11 @@
-from .models import User
+from django.contrib.auth.models import User
 from rest_framework.parsers import JSONParser
 from .serializers import UserSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.http import Http404
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 from django.template import RequestContext
 from django.shortcuts import render,redirect
@@ -13,39 +13,45 @@ import requests
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from braces.views import CsrfExemptMixin
+from django.contrib.auth import authenticate
 
 class UserLogin(CsrfExemptMixin,APIView):
     authentication_classes = []
 
     def get(self,request, *args, **kwargs):
-        return HttpResponse(loader.render_to_string('login.html'))
+
+        clientId= request.GET.get('clientId')
+        return render(request, 'registration/login.html', {'result':{'clientId':clientId}})
+        #return HttpResponse(loader.render_to_string('registration/login.html'))
 
     def post(self,request):
         login = request.POST.get("login")
         password = request.POST.get("password")
         clientId = request.GET.get("clientId")
-        clientSecret = request.GET.get("clientSecret")
 
-        try:
-            user = User.objects.get(login=login,password=password)
-        except User.DoesNotExist:
-            raise Http404
+        #try:
+            #user = User.objects.get(username=login,password=password)
+        #except User.DoesNotExist:
+        #    raise Http404
+        user = authenticate(username=login, password=password)
+        if user is not None:
 
+            data = [
+                    ('grant_type', 'password'),
+                    ('username', 'admin'),
+                    ('password', 'adminadmin'),
+                    ('scope', 'read'),
+                    ]
 
-        data = [
-                ('grant_type', 'password'),
-                ('username', 'admin'),
-                ('password', 'adminadmin'),
-                ('scope', 'read'),
-                ]
-
-        response = requests.post('http://localhost:8002/o/token/', data=data, auth=(clientId,  clientSecret))
+        #response = requests.post('http://localhost:8002/o/token/', data=data, auth=(clientId,  clientSecret))
     
-        return Response(response)
-                #redirect('http://localhost:8002/o/authorize/?response_type='
-               #         'code&client_id={}&username={}&password={}&redirect_uri=http://localhost:8003/auth/'.format(clientId,login,password))
+        #return Response(response)
+            return redirect('http://localhost:8002/o/authorize/?response_type='
+                            'code&client_id={}&username={}&password={}&redirect_uri=http://localhost:8003/auth/'.format(clientId,login,password))
+        else:
+            #raise Http404 
+            return render(request, 'registration/login.html', {'result':{'error':'Invalid password or login', 'clientId': clientId}})    
 
-        #return Response("response")
 
 
 
