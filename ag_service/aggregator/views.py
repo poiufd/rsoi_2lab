@@ -10,13 +10,39 @@ import json
 from django.template import loader
 from django.http import HttpResponse
 from django.template import RequestContext
-
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+from braces.views import CsrfExemptMixin
 
 url_buys = 'http://localhost:8000/buys/'
 url_products = 'http://localhost:8001/products/'
 url_user = 'http://localhost:8002/user/'
 
 logging.basicConfig(filename='temp.log', level=logging.INFO)
+
+ClientId = 'OdDr0vDribM42njMOQwmakhGC1vXaTogVyipMHjK'
+ClientSecret = '0RoojuHswkIMfhPLt38yo2jIyjZzf9NZunMR8hcVm0e6h2nJrTDDM607ZNpRjZud5hjuMEo5NOR80ZG6e4dVkVDkJdLLZblf5B8mKBCBQVNfuZqi92CGzeibqofvQh3v'
+
+class UserLogin(CsrfExemptMixin,APIView):
+    authentication_classes = []
+    def get(self, request):
+        return HttpResponse(loader.render_to_string('index.html'))
+
+   
+    def post(self, request):
+        try:
+            r = requests.post(url_user + 'auth/?clientId={}&clientSecret={}'.format(ClientId,ClientSecret), request.POST)
+            r.raise_for_status()
+        except requests.exceptions.HTTPError as e:
+            status_code = e.response.status_code
+            return render(request, 'index.html', {'error':'Invalid password or login'})  
+        except requests.exceptions.RequestException:
+            return HttpResponse(loader.render_to_string('503.html'), status=503)  
+
+        return render(request, 'index.html', {'error':r.json()})      
+
+def auth(request):
+    return HttpResponse("Success")
 
 class AggUserBuysView(APIView):
 
