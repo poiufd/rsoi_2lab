@@ -36,24 +36,17 @@ class UserLogin(CsrfExemptMixin,APIView):
         user = authenticate(username=login, password=password)
         if user is not None:
 
-            data = [
-                    ('grant_type', 'password'),
-                    ('username', 'admin'),
-                    ('password', 'adminadmin'),
-                    ('scope', 'read'),
-                    ]
-
         #response = requests.post('http://localhost:8002/o/token/', data=data, auth=(clientId,  clientSecret))
     
         #return Response(response)
-            return redirect('http://localhost:8002/o/authorize/?response_type='
+            user = User.objects.get(username=login)
+            r = HttpResponseRedirect('http://localhost:8002/o/authorize/?response_type='
                             'code&client_id={}&username={}&password={}&redirect_uri=http://localhost:8003/auth/'.format(clientId,login,password))
+            r.set_cookie('id',user.id)
+            return r
         else:
             #raise Http404 
             return render(request, 'registration/login.html', {'result':{'error':'Invalid password or login', 'clientId': clientId}})    
-
-
-
 
 class UserView(APIView):
 

@@ -13,6 +13,8 @@ from django.template import RequestContext
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from braces.views import CsrfExemptMixin
+from django.http import HttpResponse, HttpResponseRedirect
+from django.urls import reverse
 
 url_buys = 'http://localhost:8000/buys/'
 url_products = 'http://localhost:8001/products/'
@@ -27,29 +29,38 @@ class UserLogin(CsrfExemptMixin,APIView):
     authentication_classes = []
     def get(self, request):
         return HttpResponse(loader.render_to_string('index.html'))
-''' 
- def post(self, request):
 
-        try:
-            r = requests.post(url_user + 'auth/?clientId={}&clientSecret={}'.format(ClientId,ClientSecret), request.POST)
-            r.raise_for_status()
-        except requests.exceptions.HTTPError as e:
-            status_code = e.response.status_code
-            return render(request, 'index.html', {'error':'Invalid password or login'})  
-        except requests.exceptions.RequestException:
-            return HttpResponse(loader.render_to_string('503.html'), status=503)  
-
-        temp = request.GET.get("code")
-        print(temp)
-        return HttpResponse(r)      
-'''
 
 class Auth(CsrfExemptMixin,APIView):
     authentication_classes = []
     
+    def get(self,request): 
+        try:
+            r = requests.post('http://localhost:8002/o/token/?grant_type=authorization_code&'
+                                        'client_id={}&client_secret={}&code={}&redirect_uri=http://localhost:8003/auth/'.format(ClientId ,ClientSecret,request.GET.get('code')))
+            r.raise_for_status()
+        except requests.exceptions.HTTPError as e:
+            status_code = e.response.status_code
+            return HttpResponse(loader.render_to_string( str(status_code)+'.html'), status=status_code)
+    
+        user_id = request.COOKIES.get('id')
+        
+        print(user_id)
+
+        r1 = HttpResponseRedirect(reverse('agg2',args=[user_id]))
+        r1.set_cookie('access',r.json().get('access_token'))
+        r1.set_cookie('refresh',r.json().get('refresh_token'))
+
+        #here redirect to userid
+        return r1
+        #return HttpResponse(r)
+
+
+class Auth2(CsrfExemptMixin,APIView):
+    authentication_classes = []
+    
     def get(self,request):
-        print(request.GET.get('code'))           
-        return HttpResponse("Success" + request.GET.get('code'))
+        return HttpResponse('Success')
 
 
 class AggUserBuysView(APIView):
