@@ -19,11 +19,55 @@ from django.urls import reverse
 url_buys = 'http://localhost:8000/buys/'
 url_products = 'http://localhost:8001/products/'
 url_user = 'http://localhost:8002/user/'
+url_aggregator = 'http://localhost:8003/'
 
 logging.basicConfig(filename='temp.log', level=logging.INFO)
 
 ClientId = 'OdDr0vDribM42njMOQwmakhGC1vXaTogVyipMHjK'
 ClientSecret = '0RoojuHswkIMfhPLt38yo2jIyjZzf9NZunMR8hcVm0e6h2nJrTDDM607ZNpRjZud5hjuMEo5NOR80ZG6e4dVkVDkJdLLZblf5B8mKBCBQVNfuZqi92CGzeibqofvQh3v'
+
+
+def has_access(request):
+    token = request.COOKIES.get('access')
+
+    print (token)
+    headers = {
+                'Authorization': 'Bearer '+ str(token),
+                }
+    resp = requests.get(url_user + 'check_rights/', headers=headers)
+    if resp.status_code == 200:
+        return True
+    else:
+        return False
+
+def refresh(request):
+    try:
+        r = requests.get(url_aggregator+'re_auth/',cookies=request.COOKIES)
+        r.raise_for_status()
+    except requests.exceptions.HTTPError as e:
+        return False
+    return True        
+
+
+class ReAuth(CsrfExemptMixin,APIView):
+    authentication_classes = []
+    
+    def get(self,request): 
+        try:
+            token = request.COOKIES.get('refresh')
+            r = requests.post('http://localhost:8002/o/token/?grant_type=refresh_token&'
+                                        'client_id={}&client_secret={}&refresh_token={}&redirect_uri=http://localhost:8003/auth/'.format(ClientId ,ClientSecret,token))
+            r.raise_for_status()
+        except requests.exceptions.HTTPError as e:
+            status_code = e.response.status_code
+            return HttpResponse(status=status_code)
+
+        r1 = HttpResponse()
+        r1.set_cookie('access',r.json().get('access_token'))
+        r1.set_cookie('refresh',r.json().get('refresh_token'))
+
+        print (r.json().get('refresh_token'))
+        return r1
 
 class UserLogin(CsrfExemptMixin,APIView):
     authentication_classes = []
@@ -44,8 +88,6 @@ class Auth(CsrfExemptMixin,APIView):
             return HttpResponse(loader.render_to_string( str(status_code)+'.html'), status=status_code)
     
         user_id = request.COOKIES.get('id')
-        
-        print(user_id)
 
         r1 = HttpResponseRedirect(reverse('agg2',args=[user_id]))
         r1.set_cookie('access',r.json().get('access_token'))
@@ -66,6 +108,10 @@ class Auth2(CsrfExemptMixin,APIView):
 class AggUserBuysView(APIView):
 
     def get(self, request, user_id, order_id, format=None):
+        if not has_access(request):
+            if not refresh(request): 
+                return HttpResponseRedirect(url_aggregator)  
+
         try:
             r = requests.get(url_buys+"user/"+str(user_id)+"/" + str(order_id)+"/")
             r.raise_for_status()
@@ -95,6 +141,9 @@ class AggUserBuysView(APIView):
 
 
     def post(self, request, user_id, order_id, format=None):
+        if not has_access(request):
+            if not refresh(request): 
+                return HttpResponseRedirect(url_aggregator)          
         try:
             r = requests.get(url_buys+"user/"+str(user_id)+"/" + str(order_id)+"/")
             r.raise_for_status()
@@ -153,6 +202,9 @@ class AggUserBuysView(APIView):
 class AggDeleteOrder(APIView):
 
     def post(self, request, user_id, order_id, product_id, format=None):
+        if not has_access(request):
+            if not refresh(request): 
+                return HttpResponseRedirect(url_aggregator)  
         try:
             r = requests.get(url_buys +"user/"+ str(user_id)+"/" + str(order_id)+"/")
             r.raise_for_status()

@@ -14,6 +14,14 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from braces.views import CsrfExemptMixin
 from django.contrib.auth import authenticate
+from oauth2_provider.decorators import protected_resource
+from django.contrib.auth.decorators import login_required
+
+
+@protected_resource()
+def check_rights(request):
+    return HttpResponse(status=200)
+
 
 class UserLogin(CsrfExemptMixin,APIView):
     authentication_classes = []
