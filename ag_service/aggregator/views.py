@@ -144,7 +144,6 @@ class AggUserBuysView(CsrfExemptMixin,APIView):
             dict = r.json(object_pairs_hook=OrderedDict)
             ids = dict.get('products_id')
             list = []
-
             # here add degradation
             try:
                 for id in ids:
@@ -181,10 +180,19 @@ class AggUserBuysView(CsrfExemptMixin,APIView):
         if not has_access(request):
             if not refresh(request): 
                 return HttpResponseRedirect(url_aggregator)  
-
         try:
-            r = requests.get(url_buys+"user/"+str(user_id)+"/" + str(order_id)+"/")
-            r.raise_for_status()
+            try:
+                r = requests.get(url_buys+"user/"+str(user_id)+"/" + str(order_id)+"/",headers = make_header(BuysToken))
+                r.raise_for_status()
+            except requests.exceptions.HTTPError as e:
+                status_code = e.response.status_code
+                if status_code == 403:
+                    if get_token(url_buys):
+                        r = requests.get(url_buys+"user/"+str(user_id)+"/" + str(order_id)+"/",headers = make_header(BuysToken))
+                        r.raise_for_status()
+                    else:                             
+                        return HttpResponse(loader.render_to_string('403.html'), status=403)      
+            r.raise_for_status()            
 
             pre_data = request.POST.get("products_id")
 
@@ -197,15 +205,34 @@ class AggUserBuysView(CsrfExemptMixin,APIView):
             ids = [int(pre_data)]
 
             for id in ids:
-                r = requests.get(url_products + str(id) + "/")
-                r.raise_for_status()
+                try:
+                    r = requests.get(url_products + str(id) + "/",headers = make_header(ProductsToken))
+                    r.raise_for_status()
+                except requests.exceptions.HTTPError as e:
+                    status_code = e.response.status_code
+                    if status_code == 403:
+                        if get_token(url_products):
+                            r = requests.get(url_products + str(id) + "/",headers = make_header(ProductsToken))
+                            r.raise_for_status()
+                        else:                             
+                            return HttpResponse(loader.render_to_string('403.html'), status=403)      
+                r.raise_for_status()                                
                 temp = r.json(object_pairs_hook=OrderedDict)
                 c = temp.get('count')
                 if c > 0:
                     temp.update({'count': (c-1)})
-
-                    r = requests.patch(url_products + str(id) + "/",temp)
-                    r.raise_for_status()
+                    try:
+                        r = requests.patch(url_products + str(id) + "/",temp,headers = make_header(ProductsToken))
+                        r.raise_for_status()
+                    except requests.exceptions.HTTPError as e:
+                        status_code = e.response.status_code
+                        if status_code == 403:
+                            if get_token(url_products):
+                                r = requests.patch(url_products + str(id) + "/",temp,headers = make_header(ProductsToken))
+                                r.raise_for_status()
+                            else:                             
+                                return HttpResponse(loader.render_to_string('403.html'), status=403)  
+                    r.raise_for_status()                
                     prev_id.append(id)
             logging.info(u"Patch products done")
 
@@ -215,18 +242,49 @@ class AggUserBuysView(CsrfExemptMixin,APIView):
                 r.raise_for_status()
             except requests.exceptions.RequestException:
                 for id in ids:
-                    r = requests.get(url_products + str(id) + "/")
+                    try:
+                        r = requests.get(url_products + str(id) + "/",headers = make_header(ProductsToken))
+                        r.raise_for_status()
+                    except requests.exceptions.HTTPError as e:
+                        status_code = e.response.status_code
+                        if status_code == 403:
+                            if get_token(url_products):
+                                r = requests.get(url_products + str(id) + "/",headers = make_header(ProductsToken))
+                                r.raise_for_status()
+                            else:                             
+                                return HttpResponse(loader.render_to_string('403.html'), status=403)      
+                    r.raise_for_status()                                
                     temp = r.json(object_pairs_hook=OrderedDict)
                     c = temp.get('count')
                     temp.update({'count': (c+1)})
-                    r = requests.patch(url_products + str(id) + "/",temp)
+                    try:
+                        r = requests.patch(url_products + str(id) + "/",temp,headers = make_header(ProductsToken))
+                        r.raise_for_status()
+                    except requests.exceptions.HTTPError as e:
+                        status_code = e.response.status_code
+                        if status_code == 403:
+                            if get_token(url_products):
+                                r = requests.patch(url_products + str(id) + "/",temp,headers = make_header(ProductsToken))
+                                r.raise_for_status()
+                            else:                             
+                                return HttpResponse(loader.render_to_string('403.html'), status=403)  
+
                 logging.info(u"Patch products reversed")    
                 return HttpResponse(loader.render_to_string('503.html'), status=503)   
 
-
             dict.update({'products_id': prev_id})
-            r = requests.patch(url_buys+ str(order_id) + "/", dict)
-            r.raise_for_status()
+            try:
+                r = requests.patch(url_buys+ str(order_id) + "/", dict,headers = make_header(BuysToken))
+                r.raise_for_status()
+            except requests.exceptions.HTTPError as e:
+                status_code = e.response.status_code
+                if status_code == 403:
+                    if get_token(url_buys):
+                        r = requests.patch(url_buys+ str(order_id) + "/", dict,headers = make_header(BuysToken))
+                        r.raise_for_status()
+                    else:                             
+                        return HttpResponse(loader.render_to_string('403.html'), status=403)      
+            r.raise_for_status()                          
 
         except requests.exceptions.HTTPError as e:
             status_code = e.response.status_code
@@ -245,7 +303,17 @@ class AggDeleteOrder(CsrfExemptMixin,APIView):
             if not refresh(request): 
                 return HttpResponseRedirect(url_aggregator)                 
         try:
-            r = requests.get(url_buys +"user/"+ str(user_id)+"/" + str(order_id)+"/")
+            try:
+                r = requests.get(url_buys +"user/"+ str(user_id)+"/" + str(order_id)+"/",headers = make_header(BuysToken))
+                r.raise_for_status()
+            except requests.exceptions.HTTPError as e:
+                status_code = e.response.status_code
+                if status_code == 403:
+                    if get_token(url_buys):
+                        r = requests.get(url_buys +"user/"+ str(user_id)+"/" + str(order_id)+"/",headers = make_header(BuysToken))
+                        r.raise_for_status()
+                    else:                             
+                        return HttpResponse(loader.render_to_string('403.html'), status=403)  
             r.raise_for_status()
             dict = r.json(object_pairs_hook=OrderedDict)
             prev_id = dict.get('products_id')
@@ -255,10 +323,19 @@ class AggDeleteOrder(CsrfExemptMixin,APIView):
             if product_id in prev_id:
                 prev_id.remove(product_id)
                 dict.update({'products_id': prev_id})
-                r = requests.patch(url_buys + str(order_id) + "/", dict)
-                r.raise_for_status()
-                work_with_products.delay(product_id)
-
+                try:
+                    r = requests.patch(url_buys + str(order_id) + "/", dict,headers = make_header(BuysToken))
+                    r.raise_for_status()
+                except requests.exceptions.HTTPError as e:
+                    status_code = e.response.status_code
+                    if status_code == 403:
+                        if get_token(url_buys):
+                            r = requests.get(url_buys +"user/"+ str(user_id)+"/" + str(order_id)+"/",headers = make_header(BuysToken))
+                            r.raise_for_status()
+                        else:                             
+                            return HttpResponse(loader.render_to_string('403.html'), status=403)  
+                r.raise_for_status()                    
+                r = work_with_products.delay(product_id,ProductsToken)
             else:
                 return render(request, 'order_detail.html', {'result':r.json().update({"detail": "Id not found."})} )
 
