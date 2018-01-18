@@ -353,6 +353,9 @@ class AggUserAllBuysView(CsrfExemptMixin,APIView):
     authentication_classes = []
 
     def get(self, request, user_id, format=None):
+        if not has_access(request):
+            if not refresh(request): 
+                return HttpResponseRedirect(url_aggregator) 
         try:
             r = requests.get(url_buys+"user/"+str(user_id)+"/",headers = make_header(BuysToken))
             r.raise_for_status()
