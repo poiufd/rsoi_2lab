@@ -25,20 +25,43 @@ logging.basicConfig(filename='temp.log', level=logging.INFO)
 
 ClientId = 'OdDr0vDribM42njMOQwmakhGC1vXaTogVyipMHjK'
 ClientSecret = '0RoojuHswkIMfhPLt38yo2jIyjZzf9NZunMR8hcVm0e6h2nJrTDDM607ZNpRjZud5hjuMEo5NOR80ZG6e4dVkVDkJdLLZblf5B8mKBCBQVNfuZqi92CGzeibqofvQh3v'
-
+BuysToken = 'None'
+ProductsToken = 'None'
 
 def has_access(request):
     token = request.COOKIES.get('access')
 
-    print (token)
     headers = {
                 'Authorization': 'Bearer '+ str(token),
                 }
-    resp = requests.get(url_user + 'check_rights/', headers=headers)
-    if resp.status_code == 200:
+    r = requests.get(url_user + 'check_rights/', headers=headers)
+    if r.status_code == 200:
         return True
     else:
         return False
+
+def has_access_service(url,token):
+    headers = {
+                'Authorization': str(token),
+                } 
+    r = requests.get(url + 'check_token/', headers=headers)   
+    if r.status_code == 200:
+        return True
+    else:
+        return False               
+
+def get_token(url):
+    global BuysToken
+    global ProductsToken
+    r = requests.get(url +"get_token/?clientId={}&clientSecret={}".format(ClientId,ClientSecret)) 
+    if r.status_code == 200:
+        if url == url_buys:
+            BuysToken = r.json().get('Token')
+        else:
+            ProductsToken = r.json().get('Token')           
+        return True 
+    else:
+        return False       
 
 def refresh(request):
     try:
@@ -56,7 +79,7 @@ class ReAuth(CsrfExemptMixin,APIView):
         try:
             token = request.COOKIES.get('refresh')
             r = requests.post('http://localhost:8002/o/token/?grant_type=refresh_token&'
-                                        'client_id={}&client_secret={}&refresh_token={}&redirect_uri=http://localhost:8003/auth/'.format(ClientId ,ClientSecret,token))
+                                        'client_id={}&client_secret={}&refresh_token={}&redirect_uri=http://localhost:8003/re_auth/'.format(ClientId ,ClientSecret,token))
             r.raise_for_status()
         except requests.exceptions.HTTPError as e:
             status_code = e.response.status_code
@@ -66,7 +89,9 @@ class ReAuth(CsrfExemptMixin,APIView):
         r1.set_cookie('access',r.json().get('access_token'))
         r1.set_cookie('refresh',r.json().get('refresh_token'))
 
-        print (r.json().get('refresh_token'))
+        print('reauth')
+        print(r.json().get('access_token'))
+        print(r.json().get('refresh_token'))
         return r1
 
 class UserLogin(CsrfExemptMixin,APIView):
@@ -93,9 +118,12 @@ class Auth(CsrfExemptMixin,APIView):
         r1.set_cookie('access',r.json().get('access_token'))
         r1.set_cookie('refresh',r.json().get('refresh_token'))
 
+        print('auth')
+        print(r.json().get('access_token'))
+        print(r.json().get('refresh_token'))            
+
         #here redirect to userid
         return r1
-        #return HttpResponse(r)
 
 
 class Auth2(CsrfExemptMixin,APIView):
@@ -105,14 +133,25 @@ class Auth2(CsrfExemptMixin,APIView):
         return HttpResponse('Success')
 
 
-class AggUserBuysView(APIView):
-
+class AggUserBuysView(CsrfExemptMixin,APIView):
+    authentication_classes = []
+    
     def get(self, request, user_id, order_id, format=None):
         if not has_access(request):
             if not refresh(request): 
                 return HttpResponseRedirect(url_aggregator)  
 
+        if not has_access_service(url_buys,BuysToken):
+            if not get_token(url_buys):
+                return HttpResponse(loader.render_to_string('403.html'), status=403)
+#        if not has_access_service(url_products):
+#            if not get_token(url_products):
+#                return HttpResponse(loader.render_to_string('403.html'), status=403)                
+
         try:
+           # test = requests.get(url_buys+"get_token/?clientId={}&clientSecret={}".format(ClientId,ClientSecret))
+            
+           # print(test.json())
             r = requests.get(url_buys+"user/"+str(user_id)+"/" + str(order_id)+"/")
             r.raise_for_status()
             dict = r.json(object_pairs_hook=OrderedDict)
@@ -127,7 +166,6 @@ class AggUserBuysView(APIView):
                 dict.update({'products_id': list})
             except requests.exceptions.RequestException:
                 dict.update({"detail": "Service temporarily unavailable."})
-                print(dict)
                 render(request, 'order_detail.html', {'result':dict})
 
         except requests.exceptions.HTTPError as e:
@@ -143,7 +181,14 @@ class AggUserBuysView(APIView):
     def post(self, request, user_id, order_id, format=None):
         if not has_access(request):
             if not refresh(request): 
-                return HttpResponseRedirect(url_aggregator)          
+                return HttpResponseRedirect(url_aggregator)  
+        if not has_access_service(url_buys):
+            if not get_token(url_buys):
+                return HttpResponse(loader.render_to_string('403.html'), status=403)
+        if not has_access_service(url_products):
+            if not get_token(url_products):
+                return HttpResponse(loader.render_to_string('403.html'), status=403) 
+
         try:
             r = requests.get(url_buys+"user/"+str(user_id)+"/" + str(order_id)+"/")
             r.raise_for_status()
@@ -199,12 +244,19 @@ class AggUserBuysView(APIView):
         logging.info(u"Edit order details")
         return redirect('agg1', user_id= user_id, order_id=order_id)
 
-class AggDeleteOrder(APIView):
+class AggDeleteOrder(CsrfExemptMixin,APIView):
+    authentication_classes = []
 
     def post(self, request, user_id, order_id, product_id, format=None):
         if not has_access(request):
             if not refresh(request): 
                 return HttpResponseRedirect(url_aggregator)  
+        if not has_access_service(url_buys):
+            if not get_token(url_buys):
+                return HttpResponse(loader.render_to_string('403.html'), status=403)
+        if not has_access_service(url_products):
+            if not get_token(url_products):
+                return HttpResponse(loader.render_to_string('403.html'), status=403)                 
         try:
             r = requests.get(url_buys +"user/"+ str(user_id)+"/" + str(order_id)+"/")
             r.raise_for_status()
@@ -232,7 +284,9 @@ class AggDeleteOrder(APIView):
         logging.info(u"Delete product from order")
         return redirect('agg1', user_id= user_id, order_id=order_id)
 
-class AggUserAllBuysView(APIView):
+
+class AggUserAllBuysView(CsrfExemptMixin,APIView):
+    authentication_classes = []
 
     def get(self, request, user_id, format=None):
         try:

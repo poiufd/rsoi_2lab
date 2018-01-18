@@ -6,6 +6,51 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.http import Http404
 from django.core.paginator import Paginator
+import binascii
+import os
+from django.http import HttpResponse, HttpResponseRedirect
+import time
+
+#aggregator clientid,secret
+ClientId = 'OdDr0vDribM42njMOQwmakhGC1vXaTogVyipMHjK'
+ClientSecret = '0RoojuHswkIMfhPLt38yo2jIyjZzf9NZunMR8hcVm0e6h2nJrTDDM607ZNpRjZud5hjuMEo5NOR80ZG6e4dVkVDkJdLLZblf5B8mKBCBQVNfuZqi92CGzeibqofvQh3v'
+token = ''
+res_time = 0
+
+#expired time in seconds
+exp_time = 60
+
+def generate_key():
+    global token
+    global res_time
+    token = binascii.hexlify(os.urandom(20)).decode() 
+    res_time = time.time()
+    return token     
+
+
+class GetToken(APIView):
+
+    def get(self,request):
+        client_id = request.GET.get("clientId")
+        client_secret = request.GET.get("clientSecret")
+        if client_id == ClientId and ClientSecret == client_secret:
+            return Response({"Token":generate_key()}) 
+        else:
+            return Response(status=status.HTTP_403_FORBIDDEN)    
+
+
+class CheckToken(APIView):
+
+    def get(self,request):
+        t = request.META.get('HTTP_AUTHORIZATION')
+        print(t)
+        print(token)
+        if t != token:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+        elif (abs(time.time() - res_time) >= exp_time):
+            return Response(status=status.HTTP_403_FORBIDDEN)
+        else:
+            return Response(status = status.HTTP_200_OK)    
 
 
 class BuyView(APIView):
@@ -90,6 +135,5 @@ class AllBuysByUserView(APIView):
         if buy.exists():
             serializer = BuySerializer(buy, many=True)
             return Response(serializer.data)
-
         else:
             raise Http404
