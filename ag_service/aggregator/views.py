@@ -137,14 +137,9 @@ class AggUserBuysView(CsrfExemptMixin,APIView):
         if not has_access(request):
             if not refresh(request): 
                 return HttpResponseRedirect(url_aggregator)  
-
-        if not has_access_service(url_buys,BuysToken):
-            if not get_token(url_buys):
-                return HttpResponse(loader.render_to_string('403.html'), status=403)             
-
+            
         try:
-            #try token
-            r = requests.get(url_buys+"user/"+str(user_id)+"/" + str(order_id)+"/")
+            r = requests.get(url_buys+"user/"+str(user_id)+"/" + str(order_id)+"/", headers = make_header(BuysToken))
             r.raise_for_status()
             dict = r.json(object_pairs_hook=OrderedDict)
             ids = dict.get('products_id')
@@ -153,16 +148,28 @@ class AggUserBuysView(CsrfExemptMixin,APIView):
             # here add degradation
             try:
                 for id in ids:
-                    r = requests.get(url_products+str(id)+"/")
+                    r = requests.get(url_products+str(id)+"/",headers = make_header(ProductsToken))
+                    r.raise_for_status()
                     list.append(r.json(object_pairs_hook=OrderedDict))
                 dict.update({'products_id': list})
+            except requests.exceptions.HTTPError as e:
+                status_code = e.response.status_code
+                if status_code == 403:
+                    if get_token(url_products):
+                        return redirect('agg1', user_id= user_id, order_id=order_id)
+                else:                             
+                    return HttpResponse(loader.render_to_string( str(status_code)+'.html'), status=status_code)    
             except requests.exceptions.RequestException:
                 dict.update({"detail": "Service temporarily unavailable."})
                 return render(request, 'order_detail.html', {'result':dict})
 
         except requests.exceptions.HTTPError as e:
             status_code = e.response.status_code
-            return HttpResponse(loader.render_to_string( str(status_code)+'.html'), status=status_code)
+            if status_code == 403:
+                if get_token(url_buys):
+                    return redirect('agg1', user_id= user_id, order_id=order_id)
+            else:                             
+                return HttpResponse(loader.render_to_string( str(status_code)+'.html'), status=status_code)
         except requests.exceptions.RequestException:
             return HttpResponse(loader.render_to_string('503.html'), status=503)
 
@@ -174,7 +181,6 @@ class AggUserBuysView(CsrfExemptMixin,APIView):
         if not has_access(request):
             if not refresh(request): 
                 return HttpResponseRedirect(url_aggregator)  
-
 
         try:
             r = requests.get(url_buys+"user/"+str(user_id)+"/" + str(order_id)+"/")
@@ -271,11 +277,16 @@ class AggUserAllBuysView(CsrfExemptMixin,APIView):
 
     def get(self, request, user_id, format=None):
         try:
-            r = requests.get(url_buys+"user/"+str(user_id)+"/")
+            r = requests.get(url_buys+"user/"+str(user_id)+"/",headers = make_header(BuysToken))
             r.raise_for_status()
         except requests.exceptions.HTTPError as e:
             status_code = e.response.status_code
-            return HttpResponse(loader.render_to_string( str(status_code)+'.html'), status=status_code)
+            if status_code == 403:
+                if get_token(url_buys):
+                    print ('success')
+                    return redirect('agg2', user_id= user_id)
+            else:                                         
+                return HttpResponse(loader.render_to_string( str(status_code)+'.html'), status=status_code)
         except requests.exceptions.RequestException:
             return HttpResponse(loader.render_to_string('503.html'), status=503)
         logging.info(u"Show orders")
