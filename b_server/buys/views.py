@@ -27,6 +27,14 @@ def generate_key():
     res_time = time.time()
     return token     
 
+def check_token(request):
+    t = request.META.get('HTTP_AUTHORIZATION')
+    if t != token:
+        return False
+    elif (abs(time.time() - res_time) >= exp_time):
+        return False
+    else:
+        return True           
 
 class GetToken(APIView):
 
@@ -64,9 +72,12 @@ class BuyView(APIView):
 
     def get(self, request, id, format=None):
 
-        buy = self.get_object(id)
-        serializer = BuySerializer(buy)
-        return Response(serializer.data)
+        if check_token(request):
+            buy = self.get_object(id)
+            serializer = BuySerializer(buy)
+            return Response(serializer.data)
+        else:
+            return Response(status=status.HTTP_403_FORBIDDEN)         
 
     def delete(self, request, id, format=None):
 
@@ -75,43 +86,49 @@ class BuyView(APIView):
         return Response({"details": "Successfully deleted"}, status=status.HTTP_204_NO_CONTENT)
 
     def patch(self, request, id, format=None):
+        if check_token(request):
+            buy = self.get_object(id)
+            serializer = BuySerializer(buy, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-        buy = self.get_object(id)
-        serializer = BuySerializer(buy, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(status=status.HTTP_403_FORBIDDEN)                  
 
 
 class BuysView(APIView):
 
     def get(self, request, format=None):
+        if check_token(request):
+            buy = Buy.objects.all()
 
-        buy = Buy.objects.all()
+            paginator = Paginator(buy, 2)
 
-        paginator = Paginator(buy, 2)
+            page = request.GET.get('page')
+            data = paginator.get_page(page)
+            if page is not None:
+                serializer = BuySerializer(data, many=True)
+                return Response(serializer.data)
 
-        page = request.GET.get('page')
-        data = paginator.get_page(page)
-        if page is not None:
-            serializer = BuySerializer(data, many=True)
+            serializer = BuySerializer(buy, many=True)
             return Response(serializer.data)
-
-        serializer = BuySerializer(buy, many=True)
-        return Response(serializer.data)
+        else:
+            return Response(status=status.HTTP_403_FORBIDDEN)             
 
     def post(self, request, format=None):
+        if check_token(request):
+            data = JSONParser().parse(request)
+            serializer = BuySerializer(data=data)
 
-        data = JSONParser().parse(request)
-        serializer = BuySerializer(data=data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(status=status.HTTP_403_FORBIDDEN) 
 
 class BuysByUserView(APIView):
 
@@ -123,17 +140,22 @@ class BuysByUserView(APIView):
             raise Http404("Not found")
 
     def get(self, request, user_id, buy_id, format=None):
-
-        buy = self.get_object(user_id, buy_id)
-        serializer = BuySerializer(buy)
-        return Response(serializer.data)
+        if check_token(request):
+            buy = self.get_object(user_id, buy_id)
+            serializer = BuySerializer(buy)
+            return Response(serializer.data)
+        else:
+            return Response(status=status.HTTP_403_FORBIDDEN)         
 
 class AllBuysByUserView(APIView):
 
     def get(self, request, user_id,format=None):
-        buy = Buy.objects.filter(user_id=user_id)
-        if buy.exists():
-            serializer = BuySerializer(buy, many=True)
-            return Response(serializer.data)
+        if check_token(request):        
+            buy = Buy.objects.filter(user_id=user_id)
+            if buy.exists():
+                serializer = BuySerializer(buy, many=True)
+                return Response(serializer.data)
+            else:
+                raise Http404
         else:
-            raise Http404
+            return Response(status=status.HTTP_403_FORBIDDEN)                
