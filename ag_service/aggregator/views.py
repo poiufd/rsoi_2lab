@@ -42,6 +42,8 @@ def has_access(request):
 
 def has_access_ui(request):
     ui_token = request.COOKIES.get('ui_token')
+    print('ui_token')
+    print(ui_token)
     headers = make_header(ui_token)
 
     r = requests.get(url_user + 'check_token/', headers=headers)
@@ -85,6 +87,13 @@ def refresh(request):
         return False
     return True        
 
+def refresh_ui(request,id):
+    try:
+        r = requests.get(url_user+'generate_token/'+str(id),cookies=request.COOKIES)
+        r.raise_for_status()
+    except requests.exceptions.HTTPError as e:  
+        return None
+    return r.json().get('Token')    
 
 class ReAuth(CsrfExemptMixin,APIView):
     authentication_classes = []
@@ -147,9 +156,15 @@ class AggUserBuysView(CsrfExemptMixin,APIView):
         if not has_access(request):
             if not refresh(request): 
                 return HttpResponseRedirect(url_aggregator)
+        
+        token = None
         if not has_access_ui(request):
-            return HttpResponse('ui not access') 
-        return HttpResponse('ui access')              
+            r = refresh_ui(request,user_id)
+            if r:
+                token = r 
+                print(token)   
+            else:
+                return HttpResponse(loader.render_to_string('403.html'), status=403)            
             
         try:
             r = requests.get(url_buys+"user/"+str(user_id)+"/" + str(order_id)+"/", headers = make_header(BuysToken))
@@ -168,7 +183,10 @@ class AggUserBuysView(CsrfExemptMixin,APIView):
                 status_code = e.response.status_code
                 if status_code == 403:
                     if get_token(url_products):
-                        return redirect('agg1', user_id= user_id, order_id=order_id)
+                        r = redirect('agg1', user_id= user_id, order_id=order_id)
+                        if token != None: 
+                            r.set_cookie('ui_token',token)
+                        return r
                 else:                             
                     return HttpResponse(loader.render_to_string( str(status_code)+'.html'), status=status_code)    
             except requests.exceptions.RequestException:
@@ -179,20 +197,37 @@ class AggUserBuysView(CsrfExemptMixin,APIView):
             status_code = e.response.status_code
             if status_code == 403:
                 if get_token(url_buys):
-                    return redirect('agg1', user_id= user_id, order_id=order_id)
+                    r = redirect('agg1', user_id= user_id, order_id=order_id)
+                    if token != None:  
+                        r.set_cookie('ui_token',token)
+                    return r
             else:                             
                 return HttpResponse(loader.render_to_string( str(status_code)+'.html'), status=status_code)
         except requests.exceptions.RequestException:
             return HttpResponse(loader.render_to_string('503.html'), status=503)
 
         logging.info(u"Show order details")
-        return render(request, 'order_detail.html', {'result':dict})
+
+        r = render(request, 'order_detail.html', {'result':dict})
+        if token != None:  
+            r.set_cookie('ui_token',token)
+        return r
 
 
     def post(self, request, user_id, order_id, format=None):
         if not has_access(request):
             if not refresh(request): 
-                return HttpResponseRedirect(url_aggregator)  
+                return HttpResponseRedirect(url_aggregator)
+
+        token = None
+        if not has_access_ui(request):
+            r = refresh_ui(request,user_id)
+            if r:
+                token = r 
+                print(token)   
+            else:
+                return HttpResponse(loader.render_to_string('403.html'), status=403)
+
         try:
             try:
                 r = requests.get(url_buys+"user/"+str(user_id)+"/" + str(order_id)+"/",headers = make_header(BuysToken))
@@ -306,7 +341,10 @@ class AggUserBuysView(CsrfExemptMixin,APIView):
             return HttpResponse(loader.render_to_string('503.html'), status=503) 
 
         logging.info(u"Edit order details")
-        return redirect('agg1', user_id= user_id, order_id=order_id)
+        r = redirect('agg1', user_id= user_id, order_id=order_id)
+        if token != None:  
+            r.set_cookie('ui_token',token)
+        return r
 
 class AggDeleteOrder(CsrfExemptMixin,APIView):
     authentication_classes = []
@@ -314,7 +352,17 @@ class AggDeleteOrder(CsrfExemptMixin,APIView):
     def post(self, request, user_id, order_id, product_id, format=None):
         if not has_access(request):
             if not refresh(request): 
-                return HttpResponseRedirect(url_aggregator)                 
+                return HttpResponseRedirect(url_aggregator)
+
+        token = None
+        if not has_access_ui(request):
+            r = refresh_ui(request,user_id)
+            if r:
+                token = r 
+                print(token)   
+            else:
+                return HttpResponse(loader.render_to_string('403.html'), status=403)
+
         try:
             try:
                 r = requests.get(url_buys +"user/"+ str(user_id)+"/" + str(order_id)+"/",headers = make_header(BuysToken))
@@ -359,7 +407,10 @@ class AggDeleteOrder(CsrfExemptMixin,APIView):
             return HttpResponse(loader.render_to_string('503.html'), status=503) 
         
         logging.info(u"Delete product from order")
-        return redirect('agg1', user_id= user_id, order_id=order_id)
+        r = redirect('agg1', user_id= user_id, order_id=order_id)
+        if token != None:  
+            r.set_cookie('ui_token',token)
+        return r
 
 
 class AggUserAllBuysView(CsrfExemptMixin,APIView):
@@ -369,6 +420,15 @@ class AggUserAllBuysView(CsrfExemptMixin,APIView):
         if not has_access(request):
             if not refresh(request): 
                 return HttpResponseRedirect(url_aggregator) 
+
+        token = None
+        if not has_access_ui(request):
+            r = refresh_ui(request,user_id)
+            if r:
+                token = r    
+            else:
+                return HttpResponse(loader.render_to_string('403.html'), status=403)  
+        
         try:
             r = requests.get(url_buys+"user/"+str(user_id)+"/",headers = make_header(BuysToken))
             r.raise_for_status()
@@ -376,11 +436,17 @@ class AggUserAllBuysView(CsrfExemptMixin,APIView):
             status_code = e.response.status_code
             if status_code == 403:
                 if get_token(url_buys):
-                    print ('success')
-                    return redirect('agg2', user_id= user_id)
+                    r = redirect('agg2', user_id= user_id)
+                    if token != None: 
+                        r.set_cookie('ui_token',token)
+                    return r
             else:                                         
                 return HttpResponse(loader.render_to_string( str(status_code)+'.html'), status=status_code)
         except requests.exceptions.RequestException:
             return HttpResponse(loader.render_to_string('503.html'), status=503)
         logging.info(u"Show orders")
-        return render(request, 'orders.html', {'result':r.json(object_pairs_hook=OrderedDict)})
+
+        r = render(request, 'orders.html', {'result':r.json(object_pairs_hook=OrderedDict)})
+        if token != None: 
+            r.set_cookie('ui_token',token)
+        return r

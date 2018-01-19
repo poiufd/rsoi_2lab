@@ -37,12 +37,15 @@ class CheckUiToken(CsrfExemptMixin,APIView):
 
     def get(self,request):
         t = request.META.get('HTTP_AUTHORIZATION')
+        print(t)
         try:
             token = UserUiAcc.objects.get(token=t)
         except UserUiAcc.DoesNotExist:
             return Response(status =status.HTTP_403_FORBIDDEN)
 
+        print('succ')
         res_time = token.res_time
+        print (abs(time.time() - float(res_time)))
         if abs(time.time() - float(res_time)) >= exp_time:
             return Response(status =status.HTTP_403_FORBIDDEN) 
         else:
@@ -61,6 +64,7 @@ class GenerateNewToken(CsrfExemptMixin,APIView):
         token = generate_key()
         res_time = time.time()
 
+        print(token)
         UserUiAcc.objects.filter(user_id=user_id).update(token = token,res_time=res_time)
         return Response({'Token': token},status =status.HTTP_200_OK)
 
