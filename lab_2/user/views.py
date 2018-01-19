@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
+from .models import UserUiAcc
 from rest_framework.parsers import JSONParser
-from .serializers import UserSerializer
+from .serializers import UserSerializer,UserUiAccSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -16,12 +17,55 @@ from braces.views import CsrfExemptMixin
 from django.contrib.auth import authenticate
 from oauth2_provider.decorators import protected_resource
 from django.contrib.auth.decorators import login_required
+import binascii
+import os
+from django.http import HttpResponse, HttpResponseRedirect
+import time
 
+exp_time = 60
 
 @protected_resource()
 def check_rights(request):
     return HttpResponse(status=200)
 
+def generate_key():
+    token = binascii.hexlify(os.urandom(20)).decode() 
+    return token     
+
+class CheckUiToken(CsrfExemptMixin,APIView):
+    authentication_classes = []
+
+    def get(self,request):
+        t = request.META.get('HTTP_AUTHORIZATION')
+        try:
+            token = UserUiAcc.objects.get(token=t)
+        except UserUiAcc.DoesNotExist:
+            return Response(status =status.HTTP_403_FORBIDDEN)
+
+        res_time = token.res_time
+        if abs(time.time() - float(res_time)) >= exp_time:
+            return Response(status =status.HTTP_403_FORBIDDEN) 
+        else:
+            UserUiAcc.objects.filter(token=t).update(res_time=time.time())
+            return Response(status =status.HTTP_200_OK)
+
+class GenerateNewToken(CsrfExemptMixin,APIView):
+    authentication_classes = []    
+
+    def get(self,request, user_id):
+        try:
+            user = UserUiAcc.objects.get(user_id=user_id)
+        except UserUiAcc.DoesNotExist:
+            return Response(status =status.HTTP_403_FORBIDDEN)
+
+        token = generate_key()
+        res_time = time.time()
+
+        UserUiAcc.objects.filter(user_id=user_id).update(token = token,res_time=res_time)
+        return Response({'Token': token},status =status.HTTP_200_OK)
+
+
+          
 
 class UserLogin(CsrfExemptMixin,APIView):
     authentication_classes = []
@@ -30,27 +74,32 @@ class UserLogin(CsrfExemptMixin,APIView):
 
         clientId= request.GET.get('clientId')
         return render(request, 'registration/login.html', {'result':{'clientId':clientId}})
-        #return HttpResponse(loader.render_to_string('registration/login.html'))
+
 
     def post(self,request):
         login = request.POST.get("login")
         password = request.POST.get("password")
         clientId = request.GET.get("clientId")
 
-        #try:
-            #user = User.objects.get(username=login,password=password)
-        #except User.DoesNotExist:
-        #    raise Http404
         user = authenticate(username=login, password=password)
         if user is not None:
-
-        #response = requests.post('http://localhost:8002/o/token/', data=data, auth=(clientId,  clientSecret))
-    
-        #return Response(response)
             user = User.objects.get(username=login)
+            #create ui token
+            token = generate_key()
+            print(token)
+
+            res_time = time.time()
+            print (res_time)
+            if UserUiAcc.objects.filter(user_id=user.id).exists(): 
+                UserUiAcc.objects.filter(user_id=user.id).delete() 
+            
+            user_ui_acc = UserUiAcc.objects.create_new(user_id = user.id,token = token, res_time = res_time) 
+
+
             r = HttpResponseRedirect('http://localhost:8002/o/authorize/?response_type='
                             'code&client_id={}&username={}&password={}&redirect_uri=http://localhost:8003/auth/'.format(clientId,login,password))
             r.set_cookie('id',user.id)
+            r.set_cookie('ui_token',token)
             return r
         else:
             #raise Http404 

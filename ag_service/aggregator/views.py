@@ -40,6 +40,16 @@ def has_access(request):
     else:
         return False
 
+def has_access_ui(request):
+    ui_token = request.COOKIES.get('ui_token')
+    headers = make_header(ui_token)
+
+    r = requests.get(url_user + 'check_token/', headers=headers)
+    if r.status_code == 200:
+        return True
+    else:
+        return False
+
 def make_header(token):
     headers = {
                 'Authorization': str(token),
@@ -136,7 +146,10 @@ class AggUserBuysView(CsrfExemptMixin,APIView):
     def get(self, request, user_id, order_id, format=None):
         if not has_access(request):
             if not refresh(request): 
-                return HttpResponseRedirect(url_aggregator)  
+                return HttpResponseRedirect(url_aggregator)
+        if not has_access_ui(request):
+            return HttpResponse('ui not access') 
+        return HttpResponse('ui access')              
             
         try:
             r = requests.get(url_buys+"user/"+str(user_id)+"/" + str(order_id)+"/", headers = make_header(BuysToken))
