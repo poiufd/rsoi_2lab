@@ -84,8 +84,13 @@ def refresh(request):
         r = requests.get(url_aggregator+'re_auth/',cookies=request.COOKIES)
         r.raise_for_status()
     except requests.exceptions.HTTPError as e:
-        return False
-    return True        
+        return None
+    res = []
+    print (r.json())
+    res.append(r.json().get('access_token'))
+    res.append(r.json().get('refresh_token'))
+    print(res)
+    return res     
 
 def refresh_ui(request,id):
     try:
@@ -108,11 +113,11 @@ class ReAuth(CsrfExemptMixin,APIView):
             status_code = e.response.status_code
             return HttpResponse(status=status_code)
 
-        r1 = HttpResponse()
-        r1.set_cookie('access',r.json().get('access_token'))
-        r1.set_cookie('refresh',r.json().get('refresh_token'))
-
-        return r1
+        #r1 = HttpResponse()
+        #r1.set_cookie('access',r.json().get('access_token'))
+        #r1.set_cookie('refresh',r.json().get('refresh_token'))
+        print (r.json())
+        return HttpResponse(r, status = 200)
 
 class UserLogin(CsrfExemptMixin,APIView):
     authentication_classes = []
@@ -153,8 +158,17 @@ class AggUserBuysView(CsrfExemptMixin,APIView):
     authentication_classes = []
     
     def get(self, request, user_id, order_id, format=None):
+        access_token = None
+        refresh_token = None
+
         if not has_access(request):
-            if not refresh(request): 
+            r = refresh(request)
+            if r:
+                access_token = r[0]
+                refresh_token = r[1]
+                print(access_token)
+                print(refresh_token)
+            else:    
                 return HttpResponseRedirect(url_aggregator)
         
         token = None
@@ -186,6 +200,10 @@ class AggUserBuysView(CsrfExemptMixin,APIView):
                         r = redirect('agg1', user_id= user_id, order_id=order_id)
                         if token != None: 
                             r.set_cookie('ui_token',token)
+                        if access_token != None:
+                            r.set_cookie('access',access_token) 
+                        if refresh_token != None:
+                            r.set_cookie('refresh',refresh_token)         
                         return r
                 else:                             
                     return HttpResponse(loader.render_to_string( str(status_code)+'.html'), status=status_code)    
@@ -200,6 +218,10 @@ class AggUserBuysView(CsrfExemptMixin,APIView):
                     r = redirect('agg1', user_id= user_id, order_id=order_id)
                     if token != None:  
                         r.set_cookie('ui_token',token)
+                    if access_token != None:
+                        r.set_cookie('access',access_token) 
+                    if refresh_token != None:
+                        r.set_cookie('refresh',refresh_token)                         
                     return r
             else:                             
                 return HttpResponse(loader.render_to_string( str(status_code)+'.html'), status=status_code)
@@ -211,12 +233,24 @@ class AggUserBuysView(CsrfExemptMixin,APIView):
         r = render(request, 'order_detail.html', {'result':dict})
         if token != None:  
             r.set_cookie('ui_token',token)
+        if access_token != None:
+            r.set_cookie('access',access_token) 
+        if refresh_token != None:
+            r.set_cookie('refresh',refresh_token)             
         return r
 
 
     def post(self, request, user_id, order_id, format=None):
+        access_token = None
+        refresh_token = None
         if not has_access(request):
-            if not refresh(request): 
+            r = refresh(request)
+            if r:
+                access_token = r[0]
+                refresh_token = r[1]
+                print(access_token)
+                print(refresh_token)
+            else:    
                 return HttpResponseRedirect(url_aggregator)
 
         token = None
@@ -342,16 +376,28 @@ class AggUserBuysView(CsrfExemptMixin,APIView):
 
         logging.info(u"Edit order details")
         r = redirect('agg1', user_id= user_id, order_id=order_id)
-        if token != None:  
+        if token != None:     
             r.set_cookie('ui_token',token)
+        if access_token != None:
+            r.set_cookie('access',access_token) 
+        if refresh_token != None:
+            r.set_cookie('refresh',refresh_token)             
         return r
 
 class AggDeleteOrder(CsrfExemptMixin,APIView):
     authentication_classes = []
 
     def post(self, request, user_id, order_id, product_id, format=None):
+        access_token = None
+        refresh_token = None
         if not has_access(request):
-            if not refresh(request): 
+            r = refresh(request)
+            if r:
+                access_token = r[0]
+                refresh_token = r[1]
+                print(access_token)
+                print(refresh_token)
+            else:    
                 return HttpResponseRedirect(url_aggregator)
 
         token = None
@@ -410,6 +456,10 @@ class AggDeleteOrder(CsrfExemptMixin,APIView):
         r = redirect('agg1', user_id= user_id, order_id=order_id)
         if token != None:  
             r.set_cookie('ui_token',token)
+        if access_token != None:
+            r.set_cookie('access',access_token) 
+        if refresh_token != None:
+            r.set_cookie('refresh',refresh_token)             
         return r
 
 
@@ -417,9 +467,17 @@ class AggUserAllBuysView(CsrfExemptMixin,APIView):
     authentication_classes = []
 
     def get(self, request, user_id, format=None):
+        access_token = None
+        refresh_token = None
         if not has_access(request):
-            if not refresh(request): 
-                return HttpResponseRedirect(url_aggregator) 
+            r = refresh(request)
+            if r:
+                access_token = r[0]
+                refresh_token = r[1]
+                print(access_token)
+                print(refresh_token)
+            else:    
+                return HttpResponseRedirect(url_aggregator)
 
         token = None
         if not has_access_ui(request):
@@ -449,4 +507,8 @@ class AggUserAllBuysView(CsrfExemptMixin,APIView):
         r = render(request, 'orders.html', {'result':r.json(object_pairs_hook=OrderedDict)})
         if token != None: 
             r.set_cookie('ui_token',token)
+        if access_token != None:
+            r.set_cookie('access',access_token) 
+        if refresh_token != None:
+            r.set_cookie('refresh',refresh_token)             
         return r

@@ -2367,3 +2367,234 @@ INFO:root:Show order details
 INFO:root:Delete product from order
 INFO:root:Show order details
 INFO:root:Show orders
+INFO:root:Show orders
+INFO:root:Show order details
+INFO:root:Show orders
+ERROR:django.request:Internal Server Error: /user/2/order/2/
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.5/dist-packages/django/core/handlers/exception.py", line 35, in inner
+    response = get_response(request)
+  File "/usr/local/lib/python3.5/dist-packages/django/core/handlers/base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/usr/local/lib/python3.5/dist-packages/django/core/handlers/base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/usr/local/lib/python3.5/dist-packages/django/views/decorators/csrf.py", line 54, in wrapped_view
+    return view_func(*args, **kwargs)
+  File "/usr/local/lib/python3.5/dist-packages/django/views/generic/base.py", line 69, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/usr/local/lib/python3.5/dist-packages/django/utils/decorators.py", line 62, in _wrapper
+    return bound_func(*args, **kwargs)
+  File "/usr/local/lib/python3.5/dist-packages/django/views/decorators/csrf.py", line 54, in wrapped_view
+    return view_func(*args, **kwargs)
+  File "/usr/local/lib/python3.5/dist-packages/django/utils/decorators.py", line 58, in bound_func
+    return func.__get__(self, type(self))(*args2, **kwargs2)
+  File "/usr/local/lib/python3.5/dist-packages/braces/views/_forms.py", line 24, in dispatch
+    return super(CsrfExemptMixin, self).dispatch(*args, **kwargs)
+  File "/usr/local/lib/python3.5/dist-packages/rest_framework/views.py", line 494, in dispatch
+    response = self.handle_exception(exc)
+  File "/usr/local/lib/python3.5/dist-packages/rest_framework/views.py", line 454, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/usr/local/lib/python3.5/dist-packages/rest_framework/views.py", line 491, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/sanya/Documents/Git/rsoi_2lab/rsoi_2lab/ag_service/aggregator/views.py", line 163, in get
+    res = refresh(request)
+  File "/home/sanya/Documents/Git/rsoi_2lab/rsoi_2lab/ag_service/aggregator/views.py", line 91, in refresh
+    return res
+UnboundLocalError: local variable 'res' referenced before assignment
+ERROR:django.request:Internal Server Error: /user/2/order/2/
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.5/dist-packages/django/core/handlers/exception.py", line 35, in inner
+    response = get_response(request)
+  File "/usr/local/lib/python3.5/dist-packages/django/core/handlers/base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/usr/local/lib/python3.5/dist-packages/django/core/handlers/base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/usr/local/lib/python3.5/dist-packages/django/views/decorators/csrf.py", line 54, in wrapped_view
+    return view_func(*args, **kwargs)
+  File "/usr/local/lib/python3.5/dist-packages/django/views/generic/base.py", line 69, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/usr/local/lib/python3.5/dist-packages/django/utils/decorators.py", line 62, in _wrapper
+    return bound_func(*args, **kwargs)
+  File "/usr/local/lib/python3.5/dist-packages/django/views/decorators/csrf.py", line 54, in wrapped_view
+    return view_func(*args, **kwargs)
+  File "/usr/local/lib/python3.5/dist-packages/django/utils/decorators.py", line 58, in bound_func
+    return func.__get__(self, type(self))(*args2, **kwargs2)
+  File "/usr/local/lib/python3.5/dist-packages/braces/views/_forms.py", line 24, in dispatch
+    return super(CsrfExemptMixin, self).dispatch(*args, **kwargs)
+  File "/usr/local/lib/python3.5/dist-packages/rest_framework/views.py", line 494, in dispatch
+    response = self.handle_exception(exc)
+  File "/usr/local/lib/python3.5/dist-packages/rest_framework/views.py", line 454, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/usr/local/lib/python3.5/dist-packages/rest_framework/views.py", line 491, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/sanya/Documents/Git/rsoi_2lab/rsoi_2lab/ag_service/aggregator/views.py", line 164, in get
+    if r:
+UnboundLocalError: local variable 'r' referenced before assignment
+INFO:root:Show orders
+INFO:root:Show order details
+INFO:root:Show orders
+ERROR:django.request:Internal Server Error: /user/2/order/2/
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.5/dist-packages/django/core/handlers/exception.py", line 35, in inner
+    response = get_response(request)
+  File "/usr/local/lib/python3.5/dist-packages/django/core/handlers/base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/usr/local/lib/python3.5/dist-packages/django/core/handlers/base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/usr/local/lib/python3.5/dist-packages/django/views/decorators/csrf.py", line 54, in wrapped_view
+    return view_func(*args, **kwargs)
+  File "/usr/local/lib/python3.5/dist-packages/django/views/generic/base.py", line 69, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/usr/local/lib/python3.5/dist-packages/django/utils/decorators.py", line 62, in _wrapper
+    return bound_func(*args, **kwargs)
+  File "/usr/local/lib/python3.5/dist-packages/django/views/decorators/csrf.py", line 54, in wrapped_view
+    return view_func(*args, **kwargs)
+  File "/usr/local/lib/python3.5/dist-packages/django/utils/decorators.py", line 58, in bound_func
+    return func.__get__(self, type(self))(*args2, **kwargs2)
+  File "/usr/local/lib/python3.5/dist-packages/braces/views/_forms.py", line 24, in dispatch
+    return super(CsrfExemptMixin, self).dispatch(*args, **kwargs)
+  File "/usr/local/lib/python3.5/dist-packages/rest_framework/views.py", line 494, in dispatch
+    response = self.handle_exception(exc)
+  File "/usr/local/lib/python3.5/dist-packages/rest_framework/views.py", line 454, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/usr/local/lib/python3.5/dist-packages/rest_framework/views.py", line 491, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/sanya/Documents/Git/rsoi_2lab/rsoi_2lab/ag_service/aggregator/views.py", line 163, in get
+    r = refresh(request)
+  File "/home/sanya/Documents/Git/rsoi_2lab/rsoi_2lab/ag_service/aggregator/views.py", line 89, in refresh
+    res.append(r.json().get('access_token'))
+  File "/usr/local/lib/python3.5/dist-packages/requests/models.py", line 892, in json
+    return complexjson.loads(self.text, **kwargs)
+  File "/usr/lib/python3.5/json/__init__.py", line 319, in loads
+    return _default_decoder.decode(s)
+  File "/usr/lib/python3.5/json/decoder.py", line 339, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+  File "/usr/lib/python3.5/json/decoder.py", line 357, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+INFO:root:Show orders
+INFO:root:Show order details
+INFO:root:Show order details
+INFO:root:Show orders
+ERROR:django.request:Internal Server Error: /user/2/order/2/
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.5/dist-packages/django/core/handlers/exception.py", line 35, in inner
+    response = get_response(request)
+  File "/usr/local/lib/python3.5/dist-packages/django/core/handlers/base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/usr/local/lib/python3.5/dist-packages/django/core/handlers/base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/usr/local/lib/python3.5/dist-packages/django/views/decorators/csrf.py", line 54, in wrapped_view
+    return view_func(*args, **kwargs)
+  File "/usr/local/lib/python3.5/dist-packages/django/views/generic/base.py", line 69, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/usr/local/lib/python3.5/dist-packages/django/utils/decorators.py", line 62, in _wrapper
+    return bound_func(*args, **kwargs)
+  File "/usr/local/lib/python3.5/dist-packages/django/views/decorators/csrf.py", line 54, in wrapped_view
+    return view_func(*args, **kwargs)
+  File "/usr/local/lib/python3.5/dist-packages/django/utils/decorators.py", line 58, in bound_func
+    return func.__get__(self, type(self))(*args2, **kwargs2)
+  File "/usr/local/lib/python3.5/dist-packages/braces/views/_forms.py", line 24, in dispatch
+    return super(CsrfExemptMixin, self).dispatch(*args, **kwargs)
+  File "/usr/local/lib/python3.5/dist-packages/rest_framework/views.py", line 494, in dispatch
+    response = self.handle_exception(exc)
+  File "/usr/local/lib/python3.5/dist-packages/rest_framework/views.py", line 454, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/usr/local/lib/python3.5/dist-packages/rest_framework/views.py", line 491, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/sanya/Documents/Git/rsoi_2lab/rsoi_2lab/ag_service/aggregator/views.py", line 164, in get
+    r = refresh(request)
+  File "/home/sanya/Documents/Git/rsoi_2lab/rsoi_2lab/ag_service/aggregator/views.py", line 89, in refresh
+    print (r.json())
+  File "/usr/local/lib/python3.5/dist-packages/requests/models.py", line 892, in json
+    return complexjson.loads(self.text, **kwargs)
+  File "/usr/lib/python3.5/json/__init__.py", line 319, in loads
+    return _default_decoder.decode(s)
+  File "/usr/lib/python3.5/json/decoder.py", line 339, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+  File "/usr/lib/python3.5/json/decoder.py", line 357, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+INFO:root:Show orders
+INFO:root:Show order details
+INFO:root:Show orders
+ERROR:django.request:Internal Server Error: /user/2/order/2/
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.5/dist-packages/django/core/handlers/exception.py", line 35, in inner
+    response = get_response(request)
+  File "/usr/local/lib/python3.5/dist-packages/django/core/handlers/base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/usr/local/lib/python3.5/dist-packages/django/core/handlers/base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/usr/local/lib/python3.5/dist-packages/django/views/decorators/csrf.py", line 54, in wrapped_view
+    return view_func(*args, **kwargs)
+  File "/usr/local/lib/python3.5/dist-packages/django/views/generic/base.py", line 69, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/usr/local/lib/python3.5/dist-packages/django/utils/decorators.py", line 62, in _wrapper
+    return bound_func(*args, **kwargs)
+  File "/usr/local/lib/python3.5/dist-packages/django/views/decorators/csrf.py", line 54, in wrapped_view
+    return view_func(*args, **kwargs)
+  File "/usr/local/lib/python3.5/dist-packages/django/utils/decorators.py", line 58, in bound_func
+    return func.__get__(self, type(self))(*args2, **kwargs2)
+  File "/usr/local/lib/python3.5/dist-packages/braces/views/_forms.py", line 24, in dispatch
+    return super(CsrfExemptMixin, self).dispatch(*args, **kwargs)
+  File "/usr/local/lib/python3.5/dist-packages/rest_framework/views.py", line 494, in dispatch
+    response = self.handle_exception(exc)
+  File "/usr/local/lib/python3.5/dist-packages/rest_framework/views.py", line 454, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/usr/local/lib/python3.5/dist-packages/rest_framework/views.py", line 491, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/sanya/Documents/Git/rsoi_2lab/rsoi_2lab/ag_service/aggregator/views.py", line 165, in get
+    r = refresh(request)
+  File "/home/sanya/Documents/Git/rsoi_2lab/rsoi_2lab/ag_service/aggregator/views.py", line 89, in refresh
+    print (r.json())
+  File "/usr/local/lib/python3.5/dist-packages/requests/models.py", line 892, in json
+    return complexjson.loads(self.text, **kwargs)
+  File "/usr/lib/python3.5/json/__init__.py", line 319, in loads
+    return _default_decoder.decode(s)
+  File "/usr/lib/python3.5/json/decoder.py", line 339, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+  File "/usr/lib/python3.5/json/decoder.py", line 357, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+INFO:root:Show orders
+INFO:root:Show order details
+INFO:root:Show orders
+ERROR:django.request:Internal Server Error: /user/2/order/2/
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.5/dist-packages/django/core/handlers/exception.py", line 35, in inner
+    response = get_response(request)
+  File "/usr/local/lib/python3.5/dist-packages/django/core/handlers/base.py", line 128, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/usr/local/lib/python3.5/dist-packages/django/core/handlers/base.py", line 126, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/usr/local/lib/python3.5/dist-packages/django/views/decorators/csrf.py", line 54, in wrapped_view
+    return view_func(*args, **kwargs)
+  File "/usr/local/lib/python3.5/dist-packages/django/views/generic/base.py", line 69, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/usr/local/lib/python3.5/dist-packages/django/utils/decorators.py", line 62, in _wrapper
+    return bound_func(*args, **kwargs)
+  File "/usr/local/lib/python3.5/dist-packages/django/views/decorators/csrf.py", line 54, in wrapped_view
+    return view_func(*args, **kwargs)
+  File "/usr/local/lib/python3.5/dist-packages/django/utils/decorators.py", line 58, in bound_func
+    return func.__get__(self, type(self))(*args2, **kwargs2)
+  File "/usr/local/lib/python3.5/dist-packages/braces/views/_forms.py", line 24, in dispatch
+    return super(CsrfExemptMixin, self).dispatch(*args, **kwargs)
+  File "/usr/local/lib/python3.5/dist-packages/rest_framework/views.py", line 494, in dispatch
+    response = self.handle_exception(exc)
+  File "/usr/local/lib/python3.5/dist-packages/rest_framework/views.py", line 454, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/usr/local/lib/python3.5/dist-packages/rest_framework/views.py", line 491, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/sanya/Documents/Git/rsoi_2lab/rsoi_2lab/ag_service/aggregator/views.py", line 165, in get
+    r = refresh(request)
+  File "/home/sanya/Documents/Git/rsoi_2lab/rsoi_2lab/ag_service/aggregator/views.py", line 90, in refresh
+    res.append(r.get('access_token'))
+AttributeError: 'Response' object has no attribute 'get'
+INFO:root:Show orders
+INFO:root:Show order details
+INFO:root:Show orders
+INFO:root:Show order details
+INFO:root:Show orders
+INFO:root:Show order details
+INFO:root:Show order details
